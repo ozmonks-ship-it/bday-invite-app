@@ -149,6 +149,10 @@ legend{font-weight:900;padding:0 6px}
 .og-img .phs .ph{flex:1;min-width:0}
 .og-img .phs .ph + .ph{margin-left:-14%}
 .kid{display:grid;gap:12px;background:var(--sun-soft)}
+.sec{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:900;margin:20px 0 8px}
+.flywheel{background:var(--sky);background-image:radial-gradient(var(--dot) 1.6px,transparent 1.7px);background-size:12px 12px;display:grid;gap:8px}
+.flywheel p{margin:0;font-weight:700}
+.madewith{margin:22px 0 0;text-align:center;font-weight:700;color:var(--muted);font-size:.9rem}
 .crumbs{flex:none;background:var(--paper);border-bottom:2px solid var(--ink);padding:4px 14px}
 .crumbs ol{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;align-items:center;gap:0 4px;font-size:.88rem;font-weight:800}
 .crumbs li{display:flex;align-items:center;gap:4px;min-width:0}
@@ -293,16 +297,19 @@ legend{font-weight:900;padding:0 6px}
         <h3>Simulate the device</h3>
         <label class="switch"><input type="checkbox" id="sim-standalone">
           <span>Opened from the installed app<small>The install banner disappears and the browser address bar goes away.</small></span></label>
-        <label class="selectrow" for="sim-browser">Browser
+        <label class="selectrow" for="sim-browser">Browser or app
           <select id="sim-browser">
             <option value="chrome">Chrome on Android (install button)</option>
             <option value="ios">Safari on iPhone (Add to Home Screen steps)</option>
+            <option value="iab-ios">Messenger’s built-in browser on iPhone</option>
+            <option value="iab-android">Messenger’s built-in browser on Android</option>
           </select>
         </label>
         <button class="btn small" type="button" id="reset">Reset prototype data</button>
       </div>
       <div class="note">
         <p><b>Try this:</b> open <b>Guest · Invite link</b>, reply “Yes” with 2 children and 1 adult, then switch to <b>Host · Who’s coming</b>. Go back to the guest link and you’ll see your saved reply, ready to change. <b>Guest · My invites</b> is what a guest sees in their installed app. The sample is a sibling party; add or remove children in <b>Edit invite</b>.</p>
+        <p style="margin-top:8px"><b>Guest to host:</b> reply as a guest, tap <b>Make my own invite</b>, create an account, and your dashboard shows the party you’re invited to plus an empty <b>Hosting</b> list ready for your first invite.</p>
       </div>
     </div>
 
@@ -335,7 +342,9 @@ legend{font-weight:900;padding:0 6px}
         <li><a href="#p-rsvp">Guest RSVP identity</a></li>
         <li><a href="#p-auth">Magic link login</a></li>
         <li><a href="#p-pwa">PWA &amp; install banner</a></li>
-        <li><a href="#p-guestapp">Guest app mode</a></li>
+        <li><a href="#p-guestapp">One app, hosts &amp; guests</a></li>
+        <li><a href="#p-growth">Guest-to-host loop</a></li>
+        <li><a href="#p-iab">Links opened in chat apps</a></li>
         <li><a href="#p-a11y">Accessibility</a></li>
         <li><a href="#p-design">Visual design</a></li>
         <li><a href="#p-tech">Architecture</a></li>
@@ -349,7 +358,7 @@ legend{font-weight:900;padding:0 6px}
 
     <article class="panel doc">
       <header>
-        <div class="eyebrow">Product requirements · v1.2 draft</div>
+        <div class="eyebrow">Product requirements · v1.3 draft</div>
         <h1>Party Pop: shareable party invites with RSVPs</h1>
         <div class="metaline">
           <span class="tag sun">Status: Draft for review</span>
@@ -392,6 +401,7 @@ legend{font-weight:900;padding:0 6px}
         <div class="grid2">
           <div class="persona"><h3>Host</h3><p>A parent planning a party for 10–30 children. Uses their phone in short bursts. Wants a nice-looking invite without design work, and a reliable head count for the venue and the cake.</p></div>
           <div class="persona"><h3>Guest</h3><p>Another parent in a class WhatsApp group. Opens the link once to reply, again on the day to find the venue and parking. May be using an older phone or a screen reader, and may reply on behalf of siblings.</p></div>
+          <div class="persona"><h3>Guest who becomes a host</h3><p>Replied to a friend’s invite, liked it, and has their own child’s birthday coming up. Often the same parent is a host one month and a guest the next.</p></div>
         </div>
       </section>
 
@@ -411,6 +421,8 @@ legend{font-weight:900;padding:0 6px}
             <tr><td>Guest</td><td>tap to open the venue and the parking in Google Maps</td><td>I can get there without retyping addresses</td></tr>
             <tr><td>Host</td><td>install the app to my home screen</td><td>I can check replies with one tap</td></tr>
             <tr><td>Guest</td><td>install the app and see only the invites I’ve received</td><td>I can find the time, place and my reply on the day without digging through chats</td></tr>
+            <tr><td>Guest</td><td>go from an invite I received to making my own</td><td>I can invite my child’s class the same easy way</td></tr>
+            <tr><td>Host and guest</td><td>see the parties I’m hosting and the ones I’m invited to in one app</td><td>I don’t need two apps or two accounts</td></tr>
           </tbody>
         </table></div>
       </section>
@@ -422,8 +434,10 @@ legend{font-weight:900;padding:0 6px}
         <div class="tablewrap"><table>
           <thead><tr><th scope="col">ID</th><th scope="col">Requirement</th><th scope="col">Priority</th></tr></thead>
           <tbody>
-            <tr><td class="req">H-01</td><td>Host signs in with an email magic link. The same email also contains a 6-digit code that can be typed instead (see §8).</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">H-01</td><td>Host signs in with an email magic link. The same email also contains a 6-digit code that can be typed instead (see §8). Creating a party requires an account; a first-time user accepts the terms and privacy notice when signing up.</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">H-02</td><td>Session persists for 30 days on the device. Sign out is available from the menu.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">H-04</td><td>One account can host parties and be a guest at others. The signed-in home, <b>My parties</b>, has two lists: <b>Hosting</b> and <b>Invited to</b>.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">H-05</td><td>On sign-up or sign-in, replies saved on that device are attached to the account. From then on those replies can only be changed while signed in, and their device tokens are retired.</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">H-03</td><td>Host can delete their account, which deletes all events, replies and photos.</td><td><span class="pri must">Must</span></td></tr>
           </tbody>
         </table></div>
@@ -466,7 +480,7 @@ legend{font-weight:900;padding:0 6px}
             <tr><td class="req">G-07</td><td>If the host has edited the guest’s reply, the guest sees the host’s version (the server copy wins over local storage).</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">G-08</td><td>After the reply-by date, guests can still reply, with a note that the host may already have finalised numbers. Host can switch replies off.</td><td><span class="pri should">Should</span></td></tr>
             <tr><td class="req">G-09</td><td>Guests never see other guests’ names or replies.</td><td><span class="pri must">Must</span></td></tr>
-            <tr><td class="req">G-10</td><td>Guests see the install banner on invite pages. When a guest (not signed in) opens the installed app, it shows <b>My invites</b>: only the invites opened on that device, each with date, venue and their reply status. No host features are shown; a small “Hosting a party? Sign in” link is the only route to them.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">G-10</td><td>Guests see the install banner on invite pages. When a guest (not signed in) opens the installed app, it shows <b>My invites</b>: only the invites opened on that device, each with date, venue and their reply status. No host features are shown; the routes to hosting are the “Make my own invite” prompts (§9c) and a “Sign in” link.</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">G-11</td><td>Invites in the guest app are removed when the host deletes the event or after the 60-day auto-deletion. Guests can remove an invite from their list.</td><td><span class="pri must">Must</span></td></tr>
           </tbody>
         </table></div>
@@ -556,12 +570,20 @@ legend{font-weight:900;padding:0 6px}
       </section>
 
       <section id="p-guestapp">
-        <h2><span class="n">9b</span>Guest app mode</h2>
-        <p>There is one PWA for everyone. What it shows depends on who opens it.</p>
+        <h2><span class="n">9b</span>One app for hosts and guests</h2>
+        <p>There is one PWA. The same person can host one party and be a guest at another, so the app adapts to who is using it rather than splitting into two apps.</p>
+        <div class="tablewrap"><table>
+          <thead><tr><th scope="col">Who opens the app</th><th scope="col">Home screen</th><th scope="col">Can do</th></tr></thead>
+          <tbody>
+            <tr><td>Not signed in</td><td><b>My invites</b> (<code>/me</code>): invites opened on this device</td><td>Read invites, reply, change replies with the device token, start “Make my own invite”</td></tr>
+            <tr><td>Signed in</td><td><b>My parties</b> (<code>/dashboard</code>): Hosting and Invited to</td><td>Everything above, plus create and manage parties; replies follow the account to any device</td></tr>
+          </tbody>
+        </table></div>
         <ul>
-          <li>The manifest’s <code>start_url</code> is <code>/app</code>. That route sends a signed-in host to <code>/dashboard</code>, and anyone else to <code>/me</code> (My invites).</li>
-          <li><code>/me</code> lists the invites opened on this device, read from local storage and refreshed with <code>get_invites(slugs[])</code>, which returns only public invite fields for the slugs given. A guest can never list or discover other invites.</li>
-          <li>The guest app has no host navigation. Signing in turns the same app into the host app; a host also keeps their own “Invites I’ve received” list.</li>
+          <li>The manifest’s <code>start_url</code> is <code>/app</code>. It sends a signed-in user to <code>/dashboard</code> and anyone else to <code>/me</code>.</li>
+          <li><code>/me</code> reads the device’s invite list from local storage and refreshes it with <code>get_invites(slugs[])</code>, which returns only public fields for the slugs given. Nobody can list or discover other invites.</li>
+          <li>For signed-in users, “Invited to” comes from <code>saved_invites</code> and their claimed replies, so it is the same on every device.</li>
+          <li>Opening an invite you host shows the guest view with a “You’re the host · Manage replies” bar.</li>
         </ul>
         <h3>iPhone storage hand-off</h3>
         <p>On iPhone and iPad, a home-screen app gets its own storage, separate from Safari. A guest who replied in Safari would open the installed app to an empty list. To carry their invites across:</p>
@@ -570,7 +592,46 @@ legend{font-weight:900;padding:0 6px}
           <li>The page points <code>&lt;link rel="manifest"&gt;</code> at <code>/manifest.webmanifest?h={code}</code>, whose <code>start_url</code> is <code>/app?h={code}</code>.</li>
           <li>On first launch the app redeems the code, saves the invites and tokens to its own storage, and removes the code from the URL.</li>
         </ol>
-        <p>On Android and desktop Chromium the installed app shares storage with the browser, so no hand-off is needed.</p>
+        <p>Signed-in users don’t need this: signing in inside the app loads everything from their account. On Android and desktop Chromium the installed app shares storage with the browser.</p>
+      </section>
+
+      <section id="p-growth">
+        <h2><span class="n">9c</span>Guest-to-host loop</h2>
+        <p>Every party reaches 10–30 families who may have a birthday coming up. Each invite is a chance to show them how easy hosting is. The prompts must never get in the way of replying.</p>
+        <div class="tablewrap"><table>
+          <thead><tr><th scope="col">ID</th><th scope="col">Where</th><th scope="col">What</th><th scope="col">Priority</th></tr></thead>
+          <tbody>
+            <tr><td class="req">L-01</td><td>Invite page, after a reply is saved</td><td>Card: “Planning a party too? Make an invite like this in about 3 minutes.” Button: <b>Make my own invite</b>. Never shown before the guest has replied.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">L-02</td><td>Invite page footer</td><td>“Made with Party Pop · Make your own invite”.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">L-03</td><td>My invites (guest home, browser and installed app)</td><td>“Throw a party of your own” card below the list.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">L-04</td><td>Sign-up screen (<code>/start?from={slug}</code>)</td><td>Email, terms checkbox, “Create my free account”. If the device holds a reply, it says that reply will move into the account.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">L-05</td><td>After sign-up</td><td>Land on My parties with the invite they came from under “Invited to” and an empty “Hosting” list with <b>+ New party invite</b>.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">L-06</td><td>Analytics</td><td>Record <code>source=invite:{slug}</code> on sign-up so we can measure which invites bring new hosts. No guest personal data is shared with the referring host.</td><td><span class="pri should">Should</span></td></tr>
+          </tbody>
+        </table></div>
+        <p class="callout"><b>Why an account to host.</b> Replies contain names, children counts and notes such as allergies. An account means only the host can read them, and a guest who signs up gets their own replies protected by their login instead of a token on one phone.</p>
+      </section>
+
+      <section id="p-iab">
+        <h2><span class="n">9d</span>Links opened inside chat apps</h2>
+        <p><b>Short answer: we can’t force every app to use the phone’s browser.</b> We can get out automatically on Android, offer a one-tap exit on iPhone that works in some apps, and always show the manual steps. The invite must work fully inside the built-in browser too.</p>
+        <p>Why it matters: a built-in browser has its own storage, so a reply made there isn’t remembered by Safari or Chrome; the app can’t be installed from it; and its cookie and storage lifetime is short.</p>
+        <div class="tablewrap"><table>
+          <thead><tr><th scope="col">Where the link is tapped</th><th scope="col">What opens</th><th scope="col">What we do</th></tr></thead>
+          <tbody>
+            <tr><td>WhatsApp, personal and group chats (iPhone and Android)</td><td>The phone’s default browser</td><td>Nothing needed. WhatsApp’s built-in browser is only for links in business messages, which we don’t send.</td></tr>
+            <tr><td>Messenger, Facebook, Instagram on Android</td><td>The app’s built-in browser</td><td>Detect it and redirect at once to an <code>intent://</code> URL with <code>scheme=https</code>, which hands the page to the default browser. Show the in-page fallback if the redirect is blocked.</td></tr>
+            <tr><td>Messenger and Facebook on iPhone</td><td>The app’s built-in browser</td><td>Show the bottom banner with <b>Open in Safari</b>. Tapping it tries the <code>x-safari-https://</code> scheme, which some versions honour. The banner also shows the manual steps: tap ••• then “Open in external browser”.</td></tr>
+            <tr><td>Instagram on iPhone</td><td>Built-in browser; the Safari scheme is blocked</td><td>Manual steps only, plus a “Copy link” button.</td></tr>
+          </tbody>
+        </table></div>
+        <ul>
+          <li>Detection uses the user-agent tokens these apps add (for example <code>FBAN</code>, <code>FBAV</code>, <code>FB_IAB</code>, <code>Instagram</code>), kept in one small module that is easy to update.</li>
+          <li>On iPhone the exit is only attempted when the guest taps; automatic attempts can leave a blank screen.</li>
+          <li>The exit URL carries a hand-off code (the same mechanism as §9b), so a reply made in the built-in browser follows the guest to their real browser.</li>
+          <li>In a built-in browser, the fixed bottom banner shows the “open in your browser” message instead of the install message.</li>
+          <li>Meta can change this behaviour in any app update. Release QA includes real-device checks in WhatsApp, Messenger, Facebook and Instagram on iOS and Android.</li>
+        </ul>
       </section>
 
       <section id="p-a11y">
@@ -674,7 +735,8 @@ create table event_children (
 create table rsvps (
   id           uuid primary key default gen_random_uuid(),
   event_id     uuid not null references events on delete cascade,
-  token_hash   text,                -- null when added by the host
+  token_hash   text,                -- null when added by the host or once claimed
+  user_id      uuid references auth.users on delete set null, -- set when a guest signs up
   name         text not null check (char_length(name) between 1 and 80),
   attending    boolean not null,
   children     smallint not null default 0 check (children between 0 and 15),
@@ -687,6 +749,14 @@ create table rsvps (
   check (not attending or children + adults >= 1)
 );
 
+-- Invites a signed-in user has opened, for "Invited to" across devices
+create table saved_invites (
+  user_id  uuid not null references auth.users on delete cascade,
+  event_id uuid not null references events on delete cascade,
+  saved_at timestamptz not null default now(),
+  primary key (user_id, event_id)
+);
+
 alter table events enable row level security;
 alter table rsvps  enable row level security;
 alter table event_children enable row level security;
@@ -696,6 +766,9 @@ create policy "own events" on events for all
   using (owner_id = auth.uid()) with check (owner_id = auth.uid());
 create policy "own children" on event_children for all
   using (exists (select 1 from events e where e.id = event_id and e.owner_id = auth.uid()));
+create policy "my own reply" on rsvps for select using (user_id = auth.uid());
+alter table saved_invites enable row level security;
+create policy "own saved invites" on saved_invites for all using (user_id = auth.uid()) with check (user_id = auth.uid());
 create policy "own replies" on rsvps for all
   using (exists (select 1 from events e where e.id = event_id and e.owner_id = auth.uid()));
 
@@ -704,7 +777,9 @@ create policy "own replies" on rsvps for all
 --   submit_rsvp(slug, token, name, attending, children, adults, note) -&gt; rsvp id
 --   get_my_rsvp(slug, token)             -&gt; that guest's reply only
 --   get_invites(slugs[])                 -&gt; public fields for the guest app list
---   create_handoff(payload) / redeem_handoff(code) -&gt; iPhone storage hand-off</code></pre>
+--   create_handoff(payload) / redeem_handoff(code) -&gt; iPhone and in-app browser hand-off
+--   claim_rsvps(tokens[])                -&gt; attach this device's replies to auth.uid()
+--   submit_rsvp_as_user(slug, …)         -&gt; signed-in replies, keyed by auth.uid()</code></pre>
       </section>
 
       <section id="p-privacy">
@@ -726,6 +801,8 @@ create policy "own replies" on rsvps for all
           <thead><tr><th scope="col">Metric</th><th scope="col">Target</th></tr></thead>
           <tbody>
             <tr><td>Median time from sign-in to first share</td><td>Under 3 minutes</td></tr>
+            <tr><td>Guests who create their own invite within 90 days</td><td>Above 5% of unique guests</td></tr>
+            <tr><td>New hosts who arrived from an invite</td><td>Above 50% of new hosts after launch month</td></tr>
             <tr><td>Invite views that end in a reply</td><td>Above 60%</td></tr>
             <tr><td>Link preview shows image in WhatsApp, Messenger, iMessage</td><td>100% in release QA</td></tr>
             <tr><td>Hosts who install the PWA</td><td>Above 25%</td></tr>
@@ -742,9 +819,9 @@ create policy "own replies" on rsvps for all
           <tbody>
             <tr><td>M1 Foundation</td><td>Next.js app on Vercel, Supabase project, schema and RLS, magic link + code sign-in, design tokens and core components.</td></tr>
             <tr><td>M2 Create &amp; share</td><td>Invite editor with siblings and photo pipeline, breadcrumbs, dashboard, public invite page, OG image, share screen.</td></tr>
-            <tr><td>M3 RSVP</td><td>Guest form, token flow, local storage, change-reply flow, host reply list with edit / delete / add.</td></tr>
+            <tr><td>M3 RSVP</td><td>Guest form, token flow, local storage, change-reply flow, host reply list with edit / delete / add, claiming replies on sign-up.</td></tr>
             <tr><td>M4 PWA</td><td>Manifest, service worker, offline invite, always-on install banner across Chromium / iOS / other, guest app mode (My invites) and the iPhone hand-off.</td></tr>
-            <tr><td>M5 Launch readiness</td><td>Accessibility audit and fixes, link-preview QA across chat apps, rate limits, privacy notice, auto-deletion job.</td></tr>
+            <tr><td>M5 Launch readiness</td><td>Guest-to-host prompts and sign-up from invites, in-app browser exit, accessibility audit and fixes, link-preview QA across chat apps, rate limits, privacy notice, auto-deletion job.</td></tr>
           </tbody>
         </table></div>
       </section>
@@ -760,6 +837,9 @@ create policy "own replies" on rsvps for all
           <li>No head-count cap; replies stay open unless the host switches them off.</li>
           <li>Replies don’t ask for the children’s names; the reply name (for example “Theo &amp; family”) is enough.</li>
           <li>Breadcrumbs appear at the top of every page.</li>
+          <li>One app covers hosting and being a guest; one account can do both.</li>
+          <li>Guests can reply without an account. Hosting requires an account, and signing up moves the guest’s replies into it.</li>
+          <li>Links are opened in the phone’s browser wherever possible (§9d), with the invite still fully working inside chat apps.</li>
         </ul>
         <h3>Still open</h3>
         <ol>
@@ -777,7 +857,7 @@ create policy "own replies" on rsvps for all
 (function(){
 const SLUG = 'mx7Kq2pL';
 const LS_KEY = 'partypop.rsvp.' + SLUG;
-const LINK = 'https://partypop.vercel.app/i/' + SLUG;
+const link = () => 'https://partypop.vercel.app/i/' + S.event.slug;
 
 const kidSvg = (bg, hat, hair) => 'data:image/svg+xml,' + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><rect width='200' height='200' fill='${bg}'/><circle cx='100' cy='122' r='54' fill='#F2B48C' stroke='#17131F' stroke-width='5'/><path d='M48 112 Q56 62 100 66 Q144 62 152 112 Q132 88 100 90 Q68 88 48 112Z' fill='${hair}' stroke='#17131F' stroke-width='5' stroke-linejoin='round'/><path d='M100 12 L74 72 L126 72Z' fill='${hat}' stroke='#17131F' stroke-width='5' stroke-linejoin='round'/><path d='M84 50 L116 50 M80 60 L120 60' stroke='#FFD23F' stroke-width='5'/><circle cx='100' cy='12' r='9' fill='#FFFFFF' stroke='#17131F' stroke-width='4'/><circle cx='82' cy='120' r='6' fill='#17131F'/><circle cx='118' cy='120' r='6' fill='#17131F'/><circle cx='68' cy='140' r='8' fill='#F07B8C'/><circle cx='132' cy='140' r='8' fill='#F07B8C'/><path d='M78 142 Q100 164 122 142' fill='none' stroke='#17131F' stroke-width='5' stroke-linecap='round'/></svg>`);
 const KID_ART = [kidSvg('#FFD23F','#C70F37','#5A3218'), kidSvg('#9FD3FF','#147A39','#E0A43A'), kidSvg('#FFC2CF','#1B4FD1','#2B1A10'), kidSvg('#C9F2D6','#6B2FB3','#B5562B')];
@@ -808,11 +888,18 @@ const groupText = r => [r.kids ? plural(r.kids,'child','children') : '', r.adult
 const S = {
   screen:'login', authed:false, email:'', codeMode:false,
   standalone:false, installed:false, browser:'chrome', installSheet:false,
-  event: structuredClone(SAMPLE_EVENT),
-  rsvps: structuredClone(SAMPLE_RSVPS),
+  events: [], cur:0, me:'priya', claimed:false,
   editing:null, confirmDel:null, adding:false,
   guestEdit:false, errors:{}, toast:'', filter:'all'
 };
+// The prototype keeps several events; host screens act on S.events[S.cur]
+const freshEvents = () => [{...structuredClone(SAMPLE_EVENT), slug:SLUG, owner:'priya', rsvps:structuredClone(SAMPLE_RSVPS)}];
+S.events = freshEvents();
+Object.defineProperty(S, 'event', {get(){ return S.events[S.cur]; }});
+Object.defineProperty(S, 'rsvps', {get(){ return S.event.rsvps; }, set(v){ S.event.rsvps = v; }});
+function withEvent(i, fn){ const prev = S.cur; S.cur = i; try{ return fn(); } finally { S.cur = prev; } }
+function myReply(){ const mine = lsGet(); return mine && (S.events[0].rsvps.find(r=>r.id===mine.id) || mine); }
+const statusTag = reply => reply ? (reply.coming ? `<span class="tag yes">${ICON.check} Going · ${groupText(reply)}</span>` : `<span class="tag no">${ICON.cross} Not going</span>`) : `<span class="tag sun">Not replied yet</span>`;
 
 function lsGet(){ try{ const v = JSON.parse(localStorage.getItem(LS_KEY)||'null'); if(v && v.people!=null && v.adults==null){ v.adults=v.people; v.kids=0; } return v; }catch(e){ return null; } }
 function lsSet(v){ try{ v ? localStorage.setItem(LS_KEY, JSON.stringify(v)) : localStorage.removeItem(LS_KEY); }catch(e){} }
@@ -830,7 +917,7 @@ const names = () => joinAnd(S.event.kids.map(k => k.name || 'Birthday star'), ' 
 const partyName = () => esc(names()) + '’s party';
 const photos = () => `<div class="photos n${S.event.kids.length}">${S.event.kids.map((k,i)=>`<div class="photo"><img src="${kidPhoto(k,i)}" alt="${esc(k.alt)}"></div>`).join('')}</div>`;
 const avatars = size => `<span class="avatars" aria-hidden="true">${S.event.kids.map((k,i)=>`<img src="${kidPhoto(k,i)}" alt="" width="${size}" height="${size}" style="width:${size}px;height:${size}px">`).join('')}</span>`;
-function fmtDate(d, opts){ try{ return new Date(d+'T12:00:00').toLocaleDateString('en-GB', opts||{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }catch(e){ return d; } }
+function fmtDate(d, opts){ if(!d) return 'Date to be set'; try{ return new Date(d+'T12:00:00').toLocaleDateString('en-GB', opts||{weekday:'long',day:'numeric',month:'long',year:'numeric'}); }catch(e){ return d; } }
 function fmtTime(t){ if(!t) return ''; const [h,m]=t.split(':').map(Number); const ap=h>=12?'pm':'am'; const hh=((h+11)%12)+1; return hh+(m?':'+String(m).padStart(2,'0'):'')+ap; }
 const timeRange = () => fmtTime(S.event.start) + (S.event.end ? '–' + fmtTime(S.event.end) : '');
 function headline(){
@@ -847,7 +934,8 @@ const SCREENS = [
   {id:'share', who:'host', label:'Share link', sub:'Copy, WhatsApp, chat preview', url:'/events/maya-leo/share'},
   {id:'rsvps', who:'host', label:'Who’s coming', sub:'Head count, edit replies', url:'/events/maya-leo/rsvps'},
   {id:'guest', who:'guest', label:'Invite link', sub:'What guests see and reply on', url:'/i/'+SLUG},
-  {id:'guesthome', who:'guest', label:'My invites', sub:'Guest’s installed app: invites only', url:'/me'}
+  {id:'guesthome', who:'guest', label:'My invites', sub:'Not signed in: invites only', url:'/me'},
+  {id:'signup', who:'guest', label:'Make my own party', sub:'Guest becomes a host', url:'/start?from='+SLUG}
 ];
 
 const ICON = {
@@ -877,7 +965,8 @@ function vLogin(){
   <div class="card" style="margin-top:18px;background:var(--sun-soft)">
     <h3>Just got an invite?</h3>
     <p style="margin:0" class="s">You don’t need to sign in to reply. Open the link from your chat.</p>
-  </div>`;
+  </div>
+  <p style="margin-top:12px">New to Party Pop? <button class="btn link" type="button" data-go="signup">Create a free account</button></p>`;
 }
 function vCheck(){
   const code = S.standalone || S.codeMode;
@@ -901,32 +990,59 @@ function counts(){
   const kids = yes.reduce((a,r)=>a+(+r.kids||0),0), adults = yes.reduce((a,r)=>a+(+r.adults||0),0);
   return {yes:yes.length, no:no.length, kids, adults, people:kids+adults};
 }
-function vDashboard(){
-  const c = counts();
-  return `<h2 tabindex="-1">My parties</h2>
-  <p class="lede">Signed in as ${esc(S.email||'you@example.com')}</p>
-  <div class="stack">
-    <article class="card">
+function hostCard(i){
+  return withEvent(i, () => {
+    const c = counts();
+    return `<li class="card">
       <div style="display:flex;gap:12px;align-items:center">
-        ${avatars(56)}
+        ${avatars(48)}
         <div style="min-width:0">
           <h3>${headline()}</h3>
-          <p style="margin:0;font-weight:700;color:var(--muted)">${fmtDate(S.event.date,{weekday:'short',day:'numeric',month:'short'})}, ${timeRange()}</p>
+          <p style="margin:0;font-weight:700;color:var(--muted)">${fmtDate(S.event.date,{weekday:'short',day:'numeric',month:'short'})}${S.event.start?', '+timeRange():''}</p>
         </div>
       </div>
-      <p style="margin:12px 0"><span class="tag yes">${ICON.check} ${plural(c.kids,'child','children')}, ${plural(c.adults,'adult','adults')}</span> <span class="tag">${S.rsvps.length} replies</span></p>
+      <p style="margin:12px 0"><span class="tag yes">${ICON.check} ${plural(c.kids,'child','children')}, ${plural(c.adults,'adult','adults')}</span> <span class="tag">${plural(S.rsvps.length,'reply','replies')}</span></p>
       <div class="btns">
-        <button class="btn small sun" type="button" data-go="rsvps">Replies</button>
-        <button class="btn small" type="button" data-go="edit">Edit</button>
-        <button class="btn small blue" type="button" data-go="share">Share</button>
+        <button class="btn small sun" type="button" data-go="rsvps" data-ev="${i}">Replies<span class="sr-only"> for ${partyName()}</span></button>
+        <button class="btn small" type="button" data-go="edit" data-ev="${i}">Edit<span class="sr-only"> ${partyName()}</span></button>
+        <button class="btn small blue" type="button" data-go="share" data-ev="${i}">Share<span class="sr-only"> ${partyName()}</span></button>
       </div>
-    </article>
-    <article class="card" style="opacity:.92">
-      <h3>Sam’s 4th Birthday</h3>
-      <p style="margin:0;font-weight:700;color:var(--muted)">Sat 9 Aug · Finished</p>
-    </article>
-    <button class="btn primary block" type="button" data-go="edit">+ New party invite</button>
-  </div>`;
+    </li>`;
+  });
+}
+function inviteCards(){
+  const cards = [];
+  if(S.events[0].owner !== S.me){
+    cards.push(withEvent(0, () => `<li class="card">
+      <div style="display:flex;gap:12px;align-items:center">
+        ${avatars(48)}
+        <div style="min-width:0"><h3>${headline()}</h3>
+        <p style="margin:0;font-weight:700;color:var(--muted)">${fmtDate(S.event.date,{weekday:'short',day:'numeric',month:'short'})}, ${timeRange()} · ${esc(S.event.venue)}</p></div>
+      </div>
+      <p style="margin:10px 0">${statusTag(myReply())}</p>
+      <button class="btn small sun" type="button" data-go="guest">Open invite<span class="sr-only">: ${headline()}</span></button>
+    </li>`));
+  }
+  OTHER_INVITES.forEach(o => cards.push(`<li class="card"><h3>${esc(o.title)}</h3>
+      <p style="margin:0 0 10px;font-weight:700;color:var(--muted)">${fmtDate(o.date,{weekday:'short',day:'numeric',month:'short'})}, ${esc(o.time)} · ${esc(o.venue)}</p>
+      <p style="margin:0 0 10px"><span class="tag sun">Not replied yet</span></p>
+      <button class="btn small" type="button" data-act="noop">Open invite<span class="sr-only">: ${esc(o.title)}</span></button></li>`));
+  return `<ul class="rsvp-list">${cards.join('')}</ul>`;
+}
+function vDashboard(){
+  const hosting = S.events.map((e,i)=>i).filter(i => S.events[i].owner === S.me);
+  return `<h2 tabindex="-1">My parties</h2>
+  <p class="lede">Signed in as ${esc(S.email||'you@example.com')}</p>
+  <section aria-labelledby="h-hosting">
+    <h3 class="sec" id="h-hosting">Hosting</h3>
+    ${hosting.length ? `<ul class="rsvp-list">${hosting.map(hostCard).join('')}</ul>` : `<p class="card" style="margin:0">You’re not hosting a party yet. Your first invite takes about 3 minutes.</p>`}
+    ${S.me==='priya' ? `<p class="card" style="margin:10px 0 0;opacity:.92"><b>Maya’s 5th Birthday</b><br><span style="font-weight:700;color:var(--muted)">Sat 8 Nov 2025 · Finished</span></p>` : ''}
+    <button class="btn primary block" type="button" data-act="new-party" style="margin-top:12px">+ New party invite</button>
+  </section>
+  <section aria-labelledby="h-invited">
+    <h3 class="sec" id="h-invited">Invited to</h3>
+    ${inviteCards()}
+  </section>`;
 }
 function kidBlock(k, i, n, f){
   const who = k.name || 'birthday star ' + (i+1);
@@ -960,8 +1076,8 @@ function readEdit(form){
 function vEdit(){
   const ev = S.event;
   const f = (id,label,val,type='text',extra='') => `<div class="field"><label for="${id}">${label}</label><input type="${type}" id="${id}" name="${id.slice(2)}" value="${esc(val)}" ${extra}></div>`;
-  return `<h2 tabindex="-1">Edit invite</h2>
-  <p class="lede">Guests see changes straight away.</p>
+  return `<h2 tabindex="-1">${ev.isNew ? 'New party invite' : 'Edit invite'}</h2>
+  <p class="lede">${ev.isNew ? 'Fill in the details, then share one link with your guests.' : 'Guests see changes straight away.'}</p>
   <form class="stack" data-form="edit" novalidate>
     ${ev.kids.map((k,i)=>kidBlock(k,i,ev.kids.length,f)).join('')}
     ${ev.kids.length<4?`<button class="btn sun" type="button" data-act="kid-add">+ Add a brother or sister</button>`:'<p class="hint" style="margin:0">Up to 4 children per invite.</p>'}
@@ -987,23 +1103,23 @@ function ogCard(){
   </div>`;
 }
 function vShare(){
-  const text = encodeURIComponent(`You're invited to ${names()}'s party! ${LINK}`);
+  const text = encodeURIComponent(`You're invited to ${names()}'s party! ${link()}`);
   return `<h2 tabindex="-1">Share the invite</h2>
   <p class="lede">Paste this link into your class WhatsApp group or any chat.</p>
   <div class="stack">
     <div class="field">
       <label for="f-link">Invite link</label>
-      <div class="linkbox"><input id="f-link" type="text" readonly value="${LINK}"><button class="btn sun small" type="button" data-act="copy">Copy</button></div>
+      <div class="linkbox"><input id="f-link" type="text" readonly value="${link()}"><button class="btn sun small" type="button" data-act="copy">Copy</button></div>
     </div>
     <div class="btns">
       <a class="btn go" href="https://wa.me/?text=${text}" target="_blank" rel="noopener">WhatsApp ${ICON.ext}<span class="sr-only">(opens in a new tab)</span></a>
-      <a class="btn blue" href="https://www.facebook.com/dialog/send?link=${encodeURIComponent(LINK)}" target="_blank" rel="noopener">Messenger ${ICON.ext}<span class="sr-only">(opens in a new tab)</span></a>
+      <a class="btn blue" href="https://www.facebook.com/dialog/send?link=${encodeURIComponent(link())}" target="_blank" rel="noopener">Messenger ${ICON.ext}<span class="sr-only">(opens in a new tab)</span></a>
     </div>
     <section aria-labelledby="chat-h">
       <h3 id="chat-h" style="margin:8px 0 8px;font-weight:900">How it looks in a chat</h3>
       <div class="chat">
         <span class="chat-h">Year 1 Parents · WhatsApp</span>
-        <div class="bubble">${ogCard()}<div class="txt">${LINK}</div><div class="time">10:42 ✓✓</div></div>
+        <div class="bubble">${ogCard()}<div class="txt">${link()}</div><div class="time">10:42 ✓✓</div></div>
       </div>
     </section>
   </div>`;
@@ -1058,7 +1174,7 @@ function vGuest(){
     rsvpBlock = `<div class="saved ${reply.coming?'':'no'}">
       <p style="margin:0;font-weight:900;font-size:1.1rem">${reply.coming?ICON.check+' You replied: coming with '+groupText(reply):ICON.cross+' You replied: can’t come'}</p>
       <p style="margin:0;font-weight:600">As “${esc(reply.name)}”${reply.note?` · “${esc(reply.note)}”`:''}</p>
-      <p style="margin:0;font-size:.85rem;font-weight:600">Saved on this phone. Open this link again any time to change it.</p>
+      <p style="margin:0;font-size:.85rem;font-weight:600">${S.claimed ? 'Saved to your account. Change it from any device where you’re signed in.' : 'Saved on this phone. Open this link again any time to change it.'}</p>
       <div><button class="btn sun small" type="button" data-act="guest-edit">Change my reply</button></div>
     </div>`;
   } else {
@@ -1086,7 +1202,9 @@ function vGuest(){
       <h3 id="rsvp-h" style="font-family:var(--display);font-weight:400;font-size:1.7rem;letter-spacing:.03em;margin:0 0 2px">Can you make it?</h3>
       ${ev.rsvpBy?`<p class="lede" style="margin-bottom:12px">Please reply by ${fmtDate(ev.rsvpBy,{weekday:'long',day:'numeric',month:'long'})}.</p>`:''}
       ${rsvpBlock}
-    </section>`;
+    </section>
+    ${reply && !S.guestEdit && !S.authed ? `<div style="margin-top:16px">${flywheel('after-reply')}</div>` : ''}
+    ${!S.authed ? `<p class="madewith">Made with Party Pop · <button class="btn link" type="button" data-go="signup">Make your own invite</button></p>` : ''}`;
 }
 function vRsvps(){
   const c = counts();
@@ -1127,42 +1245,51 @@ function vRsvps(){
   ${list.length?`<ul class="rsvp-list">${list.map(item).join('')}</ul>`:`<p class="card">No replies here yet.</p>`}`;
 }
 
+function flywheel(context){
+  return `<div class="card flywheel">
+    <h3>${context==='after-reply' ? 'Planning a party too?' : 'Throw a party of your own'}</h3>
+    <p>Make an invite like this in about 3 minutes, share one link and watch the replies come in. It’s free.</p>
+    <div><button class="btn primary" type="button" data-go="signup">Make my own invite</button></div>
+  </div>`;
+}
 function vGuestHome(){
-  const mine = lsGet();
-  const server = mine && S.rsvps.find(r=>r.id===mine.id);
-  const reply = server || mine;
-  const status = reply ? (reply.coming ? `<span class="tag yes">${ICON.check} Going · ${groupText(reply)}</span>` : `<span class="tag no">${ICON.cross} Not going</span>`) : `<span class="tag sun">Not replied yet</span>`;
   return `<h2 tabindex="-1">My invites</h2>
   <p class="lede">Party invites you’ve opened on this phone.</p>
-  <ul class="rsvp-list">
-    <li class="card">
-      <div style="display:flex;gap:12px;align-items:center">
-        ${avatars(48)}
-        <div style="min-width:0"><h3>${headline()}</h3>
-        <p style="margin:0;font-weight:700;color:var(--muted)">${fmtDate(S.event.date,{weekday:'short',day:'numeric',month:'short'})}, ${timeRange()} · ${esc(S.event.venue)}</p></div>
-      </div>
-      <p style="margin:10px 0">${status}</p>
-      <button class="btn small sun" type="button" data-go="guest">Open invite<span class="sr-only">: ${headline()}</span></button>
-    </li>
-    ${OTHER_INVITES.map(o=>`<li class="card"><h3>${esc(o.title)}</h3>
-      <p style="margin:0 0 10px;font-weight:700;color:var(--muted)">${fmtDate(o.date,{weekday:'short',day:'numeric',month:'short'})}, ${esc(o.time)} · ${esc(o.venue)}</p>
-      <p style="margin:0 0 10px"><span class="tag sun">Not replied yet</span></p>
-      <button class="btn small" type="button" data-act="noop">Open invite<span class="sr-only">: ${esc(o.title)}</span></button></li>`).join('')}
-  </ul>
-  <div class="note" style="margin-top:16px"><p>Only invites sent to you appear here. Party details disappear 60 days after each party.</p></div>
-  <p style="margin-top:12px"><button class="btn link" type="button" data-go="login">Hosting a party? Sign in</button></p>`;
+  ${inviteCards()}
+  <div class="note" style="margin:16px 0"><p>Only invites sent to you appear here. Party details disappear 60 days after each party.</p></div>
+  ${flywheel('home')}
+  <p style="margin-top:12px">Already have an account? <button class="btn link" type="button" data-go="login">Sign in</button></p>`;
 }
-
+function vSignup(){
+  const reply = myReply(), e = S.errors.semail, t = S.errors.terms;
+  return `<h2 tabindex="-1">Make your own invite</h2>
+  <p class="lede">Free, and ready in about 3 minutes. Hosting needs an account so only you can see your guests’ replies.</p>
+  ${reply ? `<div class="saved ${reply.coming?'':'no'}" style="margin-bottom:14px"><p style="margin:0;font-weight:800">Your reply to ${withEvent(0, partyName)} moves into your account too, so you can change it from any device.</p></div>` : ''}
+  <form class="stack" data-form="signup" novalidate>
+    <div class="field">
+      <label for="f-semail">Your email</label>
+      <input type="email" id="f-semail" name="email" autocomplete="email" value="${esc(S.email)}" ${e?'aria-invalid="true" aria-describedby="f-semail-err"':'aria-describedby="f-semail-hint"'}>
+      ${e?`<span class="err" id="f-semail-err">${ICON.cross} ${esc(e)}</span>`:`<span class="hint" id="f-semail-hint">We’ll email you a link and a code to confirm. No password.</span>`}
+    </div>
+    <div class="field">
+      <label class="switch"><input type="checkbox" id="f-terms" name="terms" ${t?'aria-invalid="true" aria-describedby="f-terms-err"':''}><span>I agree to the terms of use and the privacy notice</span></label>
+      ${t?`<span class="err" id="f-terms-err">${ICON.cross} ${esc(t)}</span>`:''}
+    </div>
+    <button class="btn primary block" type="submit">Create my free account</button>
+  </form>
+  <p style="margin-top:12px">Already have an account? <button class="btn link" type="button" data-go="login">Sign in</button></p>`;
+}
 function crumbs(){
   const parties = {label:'My parties', go:'dashboard'}, party = {label:partyName(), go:'rsvps'};
   return ({
     login:[{label:'Sign in'}],
     check:[{label:'Sign in', go:'login'}, {label:'Check your email'}],
     dashboard:[{label:'My parties'}],
-    edit:[parties, party, {label:'Edit invite'}],
+    edit:[parties, ...(S.event.isNew ? [{label:'New invite'}] : [party, {label:'Edit invite'}])],
     share:[parties, party, {label:'Share link'}],
     rsvps:[parties, {label:partyName()}],
-    guest:[{label:'My invites', go:'guesthome'}, {label:partyName()}],
+    guest:[S.authed ? parties : {label:'My invites', go:'guesthome'}, {label:partyName()}],
+    signup:[{label:'My invites', go:'guesthome'}, {label:'Make your own invite'}],
     guesthome:[{label:'My invites'}]
   })[S.screen];
 }
@@ -1172,18 +1299,21 @@ const crumbBar = () => `<nav class="crumbs" aria-label="Breadcrumb"><ol>${crumbs
 const host = document.getElementById('screen-host');
 let lastScreen = null;
 function banner(isGuest){
-  if(S.standalone || S.installed) return '';
+  if(S.standalone) return '';
+  if(S.browser==='iab-ios') return `<aside class="install" aria-label="Open in your browser"><span class="appicon" aria-hidden="true">P!</span><p><b>Open in Safari to keep your reply</b>Or tap ••• at the top, then “Open in external browser”.</p><button class="btn" type="button" data-act="escape">Open in Safari</button></aside>`;
+  if(S.browser==='iab-android') return `<aside class="install" aria-label="Open in your browser"><span class="appicon" aria-hidden="true">P!</span><p><b>Opening in your browser…</b>If nothing happens, tap the button.</p><button class="btn" type="button" data-act="escape">Open in Chrome</button></aside>`;
+  if(S.installed) return '';
   const pitch = isGuest ? 'Keep your invites on your home screen' : 'Get the Party Pop app';
   if(S.browser==='ios') return `<aside class="install" aria-label="Install the app"><span class="appicon" aria-hidden="true">P!</span><p><b>${pitch}</b>Tap ${ICON.share}<span class="sr-only">Share</span> then “Add to Home Screen”.</p></aside>`;
   return `<aside class="install" aria-label="Install the app"><span class="appicon" aria-hidden="true">P!</span><p><b>${pitch}</b>${isGuest?'Find the time, place and your reply in one tap.':'One tap to your parties. No app store.'}</p><button class="btn" type="button" data-act="install">Install</button></aside>`;
 }
 function render(){
   const scr = SCREENS.find(s=>s.id===S.screen);
-  const view = {login:vLogin,check:vCheck,dashboard:vDashboard,edit:vEdit,share:vShare,rsvps:vRsvps,guest:vGuest,guesthome:vGuestHome}[S.screen]();
+  const view = {login:vLogin,check:vCheck,dashboard:vDashboard,edit:vEdit,share:vShare,rsvps:vRsvps,guest:vGuest,guesthome:vGuestHome,signup:vSignup}[S.screen]();
   const isGuest = scr.who==='guest';
   const b = banner(isGuest);
   host.innerHTML = `
-    <div class="appbar"><span class="logo">Party Pop!</span>${S.authed && !isGuest ? `<span class="who-badge">Host</span>`: isGuest?'<span class="who-badge">Guest view</span>':''}</div>
+    <div class="appbar"><span class="logo">Party Pop!</span>${S.authed ? `<span class="who-badge">Signed in</span>` : isGuest ? '<span class="who-badge">Guest view</span>' : ''}</div>
     ${crumbBar()}
     ${S.toast?`<div class="toast" aria-hidden="true">${S.toast}</div>`:''}
     <div class="scroll ${b?'with-banner':''}" id="scroll">${view}
@@ -1195,9 +1325,11 @@ function render(){
       <div class="btns" style="justify-content:flex-end"><button class="btn" type="button" data-act="sheet-no">Cancel</button><button class="btn blue" type="button" data-act="sheet-yes" id="sheet-yes">Install</button></div>
     </div></div>`:''}`;
   document.getElementById('urlbar').hidden = S.standalone;
-  document.getElementById('url').textContent = 'partypop.vercel.app' + scr.url;
+  const iab = S.browser.startsWith('iab') && !S.standalone;
+  document.getElementById('url').textContent = (iab ? 'Messenger · ' : '') + 'partypop.vercel.app' + (S.cur ? scr.url.replace('maya-leo', S.event.slug) : scr.url);
   document.getElementById('phone-caption').textContent = S.standalone
     ? 'Running as the installed app: no address bar, no install banner.'
+    : iab ? 'Inside Messenger’s built-in browser. Replies saved here don’t carry over to the phone’s browser, and the app can’t be installed from here, so the banner offers a way out.'
     : (S.installed ? 'Installed. The banner is gone; open from the home screen to see the app view.' : 'In the browser: the install banner is fixed to the bottom.');
   document.querySelectorAll('#flow button').forEach(btn=>btn.setAttribute('aria-current', btn.dataset.go===S.screen ? 'true':'false'));
   if(S.installSheet){ document.getElementById('sheet-yes').focus(); }
@@ -1207,10 +1339,23 @@ function render(){
   }
   lastScreen = S.screen;
 }
-function go(id){
-  if(['dashboard','edit','share','rsvps'].includes(id) && !S.authed){ S.authed = true; if(!S.email) S.email='you@example.com'; }
+function go(id, ev){
+  if(['dashboard','edit','share','rsvps'].includes(id) && !S.authed){ S.authed = true; S.me = 'priya'; if(!S.email) S.email='priya@example.com'; }
+  if(id==='guest') S.cur = 0;
+  if(ev != null) S.cur = +ev;
+  if(['edit','share','rsvps'].includes(id) && S.event.owner !== S.me){
+    const mine = S.events.findIndex(e => e.owner === S.me);
+    if(mine < 0){ id = 'dashboard'; } else S.cur = mine;
+  }
   S.screen = id; S.errors = {}; S.draft = null; S.editing=null; S.confirmDel=null; S.adding=false; S.guestEdit=false;
   render();
+}
+function signedIn(){
+  S.authed = true;
+  if(S.me === 'newbie'){
+    const r = myReply(); if(r) S.claimed = true;
+    go('dashboard'); toast(r ? 'Account ready. Your reply to ' + withEvent(0, names) + '’s party is saved to it.' : 'Account ready. Let’s make your first invite!');
+  } else { go('dashboard'); toast('Signed in. Welcome back!'); }
 }
 let toastT;
 function toast(msg){
@@ -1244,14 +1389,19 @@ function invalid(prefix, field, msg, focusId){
 }
 document.addEventListener('click', e=>{
   const g = e.target.closest('[data-go]');
-  if(g){ go(g.dataset.go); if(g.closest('#flow')) {/* keep focus in nav */ g.focus(); } return; }
+  if(g){
+    const fromNav = g.closest('#flow'), id = g.dataset.go;
+    if(fromNav && ['dashboard','edit','share','rsvps'].includes(id)){ S.authed = true; S.me = 'priya'; S.email = 'priya@example.com'; S.cur = 0; }
+    if(fromNav && ['guesthome','signup'].includes(id)){ S.authed = false; }
+    go(id, g.dataset.ev); if(fromNav) g.focus(); return;
+  }
   const a = e.target.closest('[data-act]'); if(!a) return;
   const act = a.dataset.act;
-  if(act==='magic'){ S.authed=true; go('dashboard'); toast('Signed in. Welcome back!'); }
+  if(act==='magic'){ signedIn(); }
   else if(act==='copy'){
     const inp = document.getElementById('f-link');
     const done = ()=>toast('Link copied');
-    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(LINK).then(done, ()=>{ inp.select(); toast('Link selected. Press copy on your keyboard.'); }); }
+    if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(link()).then(done, ()=>{ inp.select(); toast('Link selected. Press copy on your keyboard.'); }); }
     else { inp.select(); toast('Link selected. Press copy on your keyboard.'); }
   }
   else if(act==='step'){
@@ -1266,6 +1416,16 @@ document.addEventListener('click', e=>{
   else if(act==='kid-remove'){
     readEdit(a.closest('form')); const [k] = S.event.kids.splice(+a.dataset.i, 1); toast('Removed ' + (k.name || 'child') + ' from the invite');
     host.querySelector('[data-act="kid-add"]')?.focus();
+  }
+  else if(act==='new-party'){
+    S.events.push({slug:Math.random().toString(36).slice(2,12).padEnd(10,'x'), owner:S.me, isNew:true,
+      kids:[{name:'', age:'', photo:null, alt:''}], date:'', start:'', end:'', venue:'', address:'', parking:'', parkingAddress:'', directions:'', message:'', rsvpBy:'', rsvps:[]});
+    go('edit', S.events.length - 1);
+  }
+  else if(act==='escape'){
+    const ios = S.browser === 'iab-ios'; S.browser = ios ? 'ios' : 'chrome';
+    document.getElementById('sim-browser').value = S.browser;
+    toast(ios ? 'Opened in Safari' : 'Opened in Chrome');
   }
   else if(act==='noop'){ toast('Example invite: open Maya’s to try it'); }
   else if(act==='guest-edit'){ S.guestEdit=true; render(); const n=document.getElementById('g-name'); n&&n.focus(); }
@@ -1319,17 +1479,26 @@ document.addEventListener('submit', e=>{
   if(kind==='login'){
     const v = form.email.value.trim();
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){ S.errors={email: v?'Check the email address, it looks incomplete.':'Enter your email address.'}; S.email=v; render(); document.getElementById('f-email').focus(); return; }
-    S.email=v; S.codeMode=false; go('check'); toast('Sign-in link sent');
+    S.email=v; S.me='priya'; S.codeMode=false; go('check'); toast('Sign-in link sent');
+  }
+  else if(kind==='signup'){
+    const v = form.email.value.trim(); S.email = v;
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){ S.errors={semail: v?'Check the email address, it looks incomplete.':'Enter your email address.'}; render(); document.getElementById('f-semail').focus(); return; }
+    if(!form.terms.checked){ S.errors={terms:'Tick the box to agree before creating your account.'}; render(); document.getElementById('f-terms').focus(); return; }
+    S.me='newbie'; S.codeMode=false; go('check'); toast('Check your email to finish');
   }
   else if(kind==='code'){
     const v = document.getElementById('f-code').value.trim();
     if(!/^\d{6}$/.test(v)){ toast('Enter the 6 digits from the email'); document.getElementById('f-code').focus(); return; }
-    S.authed=true; go('dashboard'); toast('Signed in. Welcome back!');
+    signedIn();
   }
   else if(kind==='edit'){
     readEdit(form);
     const missing = S.event.kids.findIndex(k => !k.name);
     if(missing >= 0){ toast('Add a name for each birthday star'); document.getElementById('f-kid'+missing+'-name')?.focus(); return; }
+    const need = [['date','f-date','Add the party date'],['start','f-start','Add a start time'],['venue','f-venue','Add the venue name'],['address','f-address','Add the venue address']].find(([k]) => !S.event[k]);
+    if(need){ toast(need[2]); document.getElementById(need[1])?.focus(); return; }
+    if(S.event.isNew){ S.event.isNew = false; go('share'); toast('Invite ready. Share the link with your guests.'); return; }
     toast('Invite saved. Guests see it now.');
   }
   else if(kind==='guest'){
@@ -1355,9 +1524,14 @@ document.addEventListener('submit', e=>{
 });
 
 document.getElementById('sim-standalone').addEventListener('change', e=>{ S.standalone=e.target.checked; render(); });
-document.getElementById('sim-browser').addEventListener('change', e=>{ S.browser=e.target.value; render(); });
+let iabT;
+document.getElementById('sim-browser').addEventListener('change', e=>{
+  S.browser=e.target.value; render(); clearTimeout(iabT);
+  // On Android the real page redirects out of the in-app browser by itself
+  if(S.browser==='iab-android') iabT = setTimeout(()=>{ if(S.browser!=='iab-android') return; S.browser='chrome'; e.target.value='chrome'; toast('Moved to Chrome automatically'); }, 2500);
+});
 document.getElementById('reset').addEventListener('click', ()=>{
-  lsSet(null); S.event=structuredClone(SAMPLE_EVENT); S.rsvps=structuredClone(SAMPLE_RSVPS); S.installed=false; S.authed=false; S.email='';
+  lsSet(null); S.events=freshEvents(); S.cur=0; S.me='priya'; S.claimed=false; S.installed=false; S.authed=false; S.email=''; S.browser='chrome'; document.getElementById('sim-browser').value='chrome';
   document.getElementById('sim-standalone').checked=false; S.standalone=false; go('login'); toast('Prototype reset');
 });
 
