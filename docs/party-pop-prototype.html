@@ -102,16 +102,17 @@ select,input,textarea{font:inherit;color:var(--ink)}
 .field input[aria-invalid=true]{border-color:var(--pow);box-shadow:0 0 0 2px var(--pow)}
 .err{color:var(--pow);font-weight:800;font-size:.88rem;display:flex;gap:6px;align-items:center}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-fieldset{border:2.5px solid var(--ink);border-radius:12px;padding:10px 12px 12px;margin:0}
+fieldset{border:2.5px solid var(--ink);border-radius:12px;padding:10px 12px 12px;margin:0;min-width:0}
+fieldset .row2{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
 legend{font-weight:900;padding:0 6px}
 .choice{display:flex;gap:10px;flex-wrap:wrap}
 .choice label{flex:1;min-width:120px;display:flex;align-items:center;gap:8px;border:2.5px solid var(--ink);border-radius:10px;padding:10px 12px;font-weight:800;cursor:pointer;min-height:48px}
 .choice input{width:20px;height:20px;accent-color:var(--ink)}
 .choice label:has(input:checked){background:var(--sun)}
 .stepper{display:flex;align-items:center;gap:0;border:2.5px solid var(--ink);border-radius:12px;width:max-content;overflow:hidden}
-.stepper button{width:48px;height:48px;border:0;background:var(--sun);font:inherit;font-size:1.5rem;font-weight:900;cursor:pointer;color:var(--ink)}
+.stepper button{width:44px;height:48px;border:0;background:var(--sun);font:inherit;font-size:1.5rem;font-weight:900;cursor:pointer;color:var(--ink)}
 .stepper button:disabled{background:#E7E4EC;color:#6E6880;cursor:not-allowed}
-.stepper input{width:64px;height:48px;border:0;border-inline:2.5px solid var(--ink);text-align:center;font-weight:900;font-size:1.2rem;-moz-appearance:textfield}
+.stepper input{width:52px;height:48px;border:0;border-inline:2.5px solid var(--ink);text-align:center;font-weight:900;font-size:1.2rem;-moz-appearance:textfield}
 .stepper input::-webkit-inner-spin-button{-webkit-appearance:none}
 
 .btn{font:inherit;font-weight:900;font-size:1rem;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:3px solid var(--ink);border-radius:12px;padding:10px 16px;min-height:48px;cursor:pointer;text-decoration:none;box-shadow:var(--shadow-sm);transition:transform .08s,box-shadow .08s;color:var(--ink);background:var(--paper)}
@@ -283,7 +284,7 @@ legend{font-weight:900;padding:0 6px}
         <button class="btn small" type="button" id="reset">Reset prototype data</button>
       </div>
       <div class="note">
-        <p><b>Try this:</b> open <b>Guest · Invite link</b>, reply “Yes, 3 people”, then switch to <b>Host · Who’s coming</b>. Go back to the guest link and you’ll see your saved reply, ready to change.</p>
+        <p><b>Try this:</b> open <b>Guest · Invite link</b>, reply “Yes” with 2 children and 1 adult, then switch to <b>Host · Who’s coming</b>. Go back to the guest link and you’ll see your saved reply, ready to change. <b>Guest · My invites</b> is what a guest sees in their installed app.</p>
       </div>
     </div>
 
@@ -316,6 +317,7 @@ legend{font-weight:900;padding:0 6px}
         <li><a href="#p-rsvp">Guest RSVP identity</a></li>
         <li><a href="#p-auth">Magic link login</a></li>
         <li><a href="#p-pwa">PWA &amp; install banner</a></li>
+        <li><a href="#p-guestapp">Guest app mode</a></li>
         <li><a href="#p-a11y">Accessibility</a></li>
         <li><a href="#p-design">Visual design</a></li>
         <li><a href="#p-tech">Architecture</a></li>
@@ -323,13 +325,13 @@ legend{font-weight:900;padding:0 6px}
         <li><a href="#p-privacy">Privacy &amp; safety</a></li>
         <li><a href="#p-metrics">Success metrics</a></li>
         <li><a href="#p-plan">Milestones</a></li>
-        <li><a href="#p-open">Open questions</a></li>
+        <li><a href="#p-open">Decisions &amp; open questions</a></li>
       </ol>
     </nav>
 
     <article class="panel doc">
       <header>
-        <div class="eyebrow">Product requirements · v1.0 draft</div>
+        <div class="eyebrow">Product requirements · v1.1 draft</div>
         <h1>Party Pop: shareable party invites with RSVPs</h1>
         <div class="metaline">
           <span class="tag sun">Status: Draft for review</span>
@@ -389,6 +391,7 @@ legend{font-weight:900;padding:0 6px}
             <tr><td>Guest</td><td>open the same link later and change my reply</td><td>I can update the host if plans change</td></tr>
             <tr><td>Guest</td><td>tap to open the venue and the parking in Google Maps</td><td>I can get there without retyping addresses</td></tr>
             <tr><td>Host</td><td>install the app to my home screen</td><td>I can check replies with one tap</td></tr>
+            <tr><td>Guest</td><td>install the app and see only the invites I’ve received</td><td>I can find the time, place and my reply on the day without digging through chats</td></tr>
           </tbody>
         </table></div>
       </section>
@@ -437,20 +440,22 @@ legend{font-weight:900;padding:0 6px}
             <tr><td class="req">G-01</td><td>Invite page is server-rendered and readable without JavaScript (RSVP form needs JS).</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">G-02</td><td>Shows photo, “{Name} is turning {age}!”, date and time, venue with “Open in Google Maps”, parking with “Parking in Google Maps”, how to get there, host’s message, reply-by date.</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">G-03</td><td>“Add to calendar” (downloads an .ics file, plus a Google Calendar link).</td><td><span class="pri should">Should</span></td></tr>
-            <tr><td class="req">G-04</td><td>RSVP form: name (required, 1–80 chars), coming yes/no (required), number of people including themselves (1–20, required if yes), optional note to host (max 500 chars, e.g. allergies).</td><td><span class="pri must">Must</span></td></tr>
-            <tr><td class="req">G-05</td><td>After submitting, the reply and a private guest token are kept in the browser’s local storage, keyed by event slug.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">G-04</td><td>RSVP form: name (required, 1–80 chars), coming yes/no (required), number of <b>children</b> (0–15) and number of <b>adults</b> including themselves (0–10), shown as two labelled steppers. When coming, the total must be at least 1. Optional note to host (max 500 chars, e.g. allergies).</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">G-05</td><td>After submitting, the reply and a private guest token are kept in the browser’s local storage, keyed by event slug. Every invite opened is also added to the device’s invite list (used by the guest app, G-10).</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">G-06</td><td>Returning to the same link on the same browser shows “You replied: …” with a “Change my reply” button. Changes update the same record, not a new one.</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">G-07</td><td>If the host has edited the guest’s reply, the guest sees the host’s version (the server copy wins over local storage).</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">G-08</td><td>After the reply-by date, guests can still reply, with a note that the host may already have finalised numbers. Host can switch replies off.</td><td><span class="pri should">Should</span></td></tr>
             <tr><td class="req">G-09</td><td>Guests never see other guests’ names or replies.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">G-10</td><td>Guests see the install banner on invite pages. When a guest (not signed in) opens the installed app, it shows <b>My invites</b>: only the invites opened on that device, each with date, venue and their reply status. No host features are shown; a small “Hosting a party? Sign in” link is the only route to them.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">G-11</td><td>Invites in the guest app are removed when the host deletes the event or after the 60-day auto-deletion. Guests can remove an invite from their list.</td><td><span class="pri must">Must</span></td></tr>
           </tbody>
         </table></div>
         <h3>5.5 Host: replies</h3>
         <div class="tablewrap"><table>
           <thead><tr><th scope="col">ID</th><th scope="col">Requirement</th><th scope="col">Priority</th></tr></thead>
           <tbody>
-            <tr><td class="req">R-01</td><td>Summary: total people coming, number of “yes” replies, number of “no” replies.</td><td><span class="pri must">Must</span></td></tr>
-            <tr><td class="req">R-02</td><td>List of replies with name, status, people, note and last-updated time. Sort by most recent; filter by coming / not coming.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">R-01</td><td>Summary: children coming, adults coming, total people, number of “yes” replies, number of “no” replies.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">R-02</td><td>List of replies with name, status, children and adults, note and last-updated time. Sort by most recent; filter by coming / not coming.</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">R-03</td><td>Host can edit any field of a reply, delete a reply (with an in-page confirmation), and add a reply manually.</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">R-04</td><td>New replies appear without reloading (Supabase Realtime on the host’s own event).</td><td><span class="pri should">Should</span></td></tr>
             <tr><td class="req">R-05</td><td>Export replies as CSV.</td><td><span class="pri could">Could</span></td></tr>
@@ -477,7 +482,7 @@ legend{font-weight:900;padding:0 6px}
         <ol>
           <li>On first submit, the browser generates a 32-byte random token (<code>crypto.getRandomValues</code>).</li>
           <li>The client calls the <code>submit_rsvp(slug, token, …)</code> database function. The server stores only the SHA-256 hash of the token.</li>
-          <li>Local storage keeps <code>{ rsvpId, token, name, coming, people, note, updatedAt }</code> under <code>partypop.rsvp.{slug}</code>.</li>
+          <li>Local storage keeps <code>{ rsvpId, token, name, coming, children, adults, note, updatedAt }</code> under <code>partypop.rsvp.{slug}</code>.</li>
           <li>On return, the client calls <code>get_my_rsvp(slug, token)</code> and shows the server copy (so host edits win), falling back to the local copy when offline.</li>
           <li>Updating calls <code>submit_rsvp</code> with the same token, which updates the existing row.</li>
         </ol>
@@ -505,6 +510,7 @@ legend{font-weight:900;padding:0 6px}
           <li>Never cache authenticated API responses in the shared cache.</li>
         </ul>
         <h3>Install banner behaviour</h3>
+        <p class="callout"><b>Decision.</b> The banner is always shown in the browser, on every page, to hosts and guests alike. It has no close button. It is hidden only when the page runs as the installed app, or after a successful install in the current session.</p>
         <div class="tablewrap"><table>
           <thead><tr><th scope="col">Situation</th><th scope="col">Banner</th></tr></thead>
           <tbody>
@@ -515,7 +521,26 @@ legend{font-weight:900;padding:0 6px}
             <tr><td>After <code>appinstalled</code> fires</td><td>Banner removed for the rest of the session.</td></tr>
           </tbody>
         </table></div>
+        <p>Wording depends on the page: host pages say “Get the Party Pop app”; invite pages say “Keep your invites on your home screen”.</p>
         <p>Layout: fixed to the bottom of the viewport, full width, with <code>env(safe-area-inset-bottom)</code> padding. The page reserves its height as bottom padding and sets <code>scroll-padding-bottom</code> so nothing, including a focused field, is hidden behind it. It is a labelled landmark (<code>&lt;aside aria-label="Install the app"&gt;</code>), not a dialog: it never takes focus and does not block the page. Standalone detection runs before first paint (inline script setting a class on <code>&lt;html&gt;</code>) so the banner never flashes in the installed app.</p>
+      </section>
+
+      <section id="p-guestapp">
+        <h2><span class="n">9b</span>Guest app mode</h2>
+        <p>There is one PWA for everyone. What it shows depends on who opens it.</p>
+        <ul>
+          <li>The manifest’s <code>start_url</code> is <code>/app</code>. That route sends a signed-in host to <code>/dashboard</code>, and anyone else to <code>/me</code> (My invites).</li>
+          <li><code>/me</code> lists the invites opened on this device, read from local storage and refreshed with <code>get_invites(slugs[])</code>, which returns only public invite fields for the slugs given. A guest can never list or discover other invites.</li>
+          <li>The guest app has no host navigation. Signing in turns the same app into the host app; a host also keeps their own “Invites I’ve received” list.</li>
+        </ul>
+        <h3>iPhone storage hand-off</h3>
+        <p>On iPhone and iPad, a home-screen app gets its own storage, separate from Safari. A guest who replied in Safari would open the installed app to an empty list. To carry their invites across:</p>
+        <ol>
+          <li>On invite pages, the browser creates a short-lived hand-off code holding the device’s invite list and tokens (<code>create_handoff(payload)</code>, valid 30 minutes, single use).</li>
+          <li>The page points <code>&lt;link rel="manifest"&gt;</code> at <code>/manifest.webmanifest?h={code}</code>, whose <code>start_url</code> is <code>/app?h={code}</code>.</li>
+          <li>On first launch the app redeems the code, saves the invites and tokens to its own storage, and removes the code from the URL.</li>
+        </ol>
+        <p>On Android and desktop Chromium the installed app shares storage with the browser, so no hand-off is needed.</p>
       </section>
 
       <section id="p-a11y">
@@ -575,6 +600,8 @@ legend{font-weight:900;padding:0 6px}
             <tr><td><code>/events/[id]/rsvps</code></td><td>Host</td><td>Replies and head count</td></tr>
             <tr><td><code>/i/[slug]</code></td><td>Guest</td><td>Invite and RSVP</td></tr>
             <tr><td><code>/i/[slug]/opengraph-image</code></td><td>Crawlers</td><td>Link preview image</td></tr>
+            <tr><td><code>/app</code></td><td>Installed app</td><td>Start URL; routes host or guest</td></tr>
+            <tr><td><code>/me</code></td><td>Guest</td><td>My invites (this device only)</td></tr>
           </tbody>
         </table></div>
       </section>
@@ -611,12 +638,14 @@ create table rsvps (
   token_hash   text,                -- null when added by the host
   name         text not null check (char_length(name) between 1 and 80),
   attending    boolean not null,
-  party_size   smallint not null check (party_size between 0 and 20),
+  children     smallint not null default 0 check (children between 0 and 15),
+  adults       smallint not null default 0 check (adults between 0 and 10),
   note         text check (char_length(note) &lt;= 500),
   last_edited_by text not null default 'guest' check (last_edited_by in ('guest','host')),
   created_at   timestamptz not null default now(),
   updated_at   timestamptz not null default now(),
-  unique (event_id, token_hash)
+  unique (event_id, token_hash),
+  check (not attending or children + adults >= 1)
 );
 
 alter table events enable row level security;
@@ -630,8 +659,10 @@ create policy "own replies" on rsvps for all
 
 -- Guests: no table grants. Access only through these functions:
 --   get_invite(slug)                     -&gt; public invite fields, no owner data
---   submit_rsvp(slug, token, name, attending, party_size, note) -&gt; rsvp id
---   get_my_rsvp(slug, token)             -&gt; that guest's reply only</code></pre>
+--   submit_rsvp(slug, token, name, attending, children, adults, note) -&gt; rsvp id
+--   get_my_rsvp(slug, token)             -&gt; that guest's reply only
+--   get_invites(slugs[])                 -&gt; public fields for the guest app list
+--   create_handoff(payload) / redeem_handoff(code) -&gt; iPhone storage hand-off</code></pre>
       </section>
 
       <section id="p-privacy">
@@ -670,20 +701,25 @@ create policy "own replies" on rsvps for all
             <tr><td>M1 Foundation</td><td>Next.js app on Vercel, Supabase project, schema and RLS, magic link + code sign-in, design tokens and core components.</td></tr>
             <tr><td>M2 Create &amp; share</td><td>Invite editor with photo pipeline, dashboard, public invite page, OG image, share screen.</td></tr>
             <tr><td>M3 RSVP</td><td>Guest form, token flow, local storage, change-reply flow, host reply list with edit / delete / add.</td></tr>
-            <tr><td>M4 PWA</td><td>Manifest, service worker, offline invite, install banner across Chromium / iOS / other.</td></tr>
+            <tr><td>M4 PWA</td><td>Manifest, service worker, offline invite, always-on install banner across Chromium / iOS / other, guest app mode (My invites) and the iPhone hand-off.</td></tr>
             <tr><td>M5 Launch readiness</td><td>Accessibility audit and fixes, link-preview QA across chat apps, rate limits, privacy notice, auto-deletion job.</td></tr>
           </tbody>
         </table></div>
       </section>
 
       <section id="p-open">
-        <h2><span class="n">17</span>Open questions</h2>
+        <h2><span class="n">17</span>Decisions &amp; open questions</h2>
+        <h3>Decided</h3>
+        <ul>
+          <li>The install banner is always shown in the browser and cannot be dismissed.</li>
+          <li>Guests see the banner too. Their installed app shows only the invites they’ve received.</li>
+          <li>Replies record children and adults separately.</li>
+        </ul>
+        <h3>Still open</h3>
         <ol>
-          <li>Should the install banner be dismissible (remembered for 7 days), or always shown in the browser as specified? A permanent banner uses about 80 px of a small screen.</li>
-          <li>Should guests see the install banner on invite pages, or only hosts? Guests rarely need the app; showing it could distract from replying.</li>
-          <li>Split “number of people” into adults and children? Venues often price per child.</li>
           <li>One invite for siblings sharing a party (two names, two photos)?</li>
           <li>Should hosts be able to set a maximum head count and close replies when it is reached?</li>
+          <li>Should the invite page say who the reply is for (children’s names), so hosts can match names to the class list?</li>
           <li>Final product name and domain.</li>
         </ol>
       </section>
@@ -712,11 +748,17 @@ const SAMPLE_EVENT = {
   rsvpBy:'2026-11-07', photo:null, photoAlt:'Photo of Maya'
 };
 const SAMPLE_RSVPS = [
-  {id:'r1', name:'Leo & family', coming:true, people:3, note:'Leo is allergic to nuts', when:'2 Oct'},
-  {id:'r2', name:'Ava Patel', coming:true, people:2, note:'', when:'3 Oct'},
-  {id:'r3', name:'The Okafors', coming:false, people:0, note:'Away that weekend. Have a brilliant day!', when:'5 Oct'},
-  {id:'r4', name:'Noah', coming:true, people:4, note:'Bringing baby sister too', when:'8 Oct'}
+  {id:'r1', name:'Leo & family', coming:true, adults:2, kids:1, note:'Leo is allergic to nuts', when:'2 Oct'},
+  {id:'r2', name:'Ava Patel', coming:true, adults:1, kids:1, note:'', when:'3 Oct'},
+  {id:'r3', name:'The Okafors', coming:false, adults:0, kids:0, note:'Away that weekend. Have a brilliant day!', when:'5 Oct'},
+  {id:'r4', name:'Noah', coming:true, adults:2, kids:2, note:'Bringing baby sister too', when:'8 Oct'}
 ];
+// Other invites this guest has opened on this device (example)
+const OTHER_INVITES = [
+  {slug:'q8Tn3vXa', title:'Oscar is turning 7!', date:'2026-12-05', time:'10:00am–12:00pm', venue:'Little Kickers, Bermondsey'}
+];
+const plural = (n, one, many) => n + ' ' + (n==1 ? one : many);
+const groupText = r => [r.kids ? plural(r.kids,'child','children') : '', r.adults ? plural(r.adults,'adult','adults') : ''].filter(Boolean).join(', ');
 
 const S = {
   screen:'login', authed:false, email:'', codeMode:false,
@@ -727,7 +769,7 @@ const S = {
   guestEdit:false, errors:{}, toast:'', filter:'all'
 };
 
-function lsGet(){ try{ return JSON.parse(localStorage.getItem(LS_KEY)||'null'); }catch(e){ return null; } }
+function lsGet(){ try{ const v = JSON.parse(localStorage.getItem(LS_KEY)||'null'); if(v && v.people!=null && v.adults==null){ v.adults=v.people; v.kids=0; } return v; }catch(e){ return null; } }
 function lsSet(v){ try{ v ? localStorage.setItem(LS_KEY, JSON.stringify(v)) : localStorage.removeItem(LS_KEY); }catch(e){} }
 function syncLocal(){
   const mine = lsGet();
@@ -750,7 +792,8 @@ const SCREENS = [
   {id:'edit', who:'host', label:'Edit invite', sub:'Photo, time, place, parking', url:'/events/maya-6/edit'},
   {id:'share', who:'host', label:'Share link', sub:'Copy, WhatsApp, chat preview', url:'/events/maya-6/share'},
   {id:'rsvps', who:'host', label:'Who’s coming', sub:'Head count, edit replies', url:'/events/maya-6/rsvps'},
-  {id:'guest', who:'guest', label:'Invite link', sub:'What guests see and reply on', url:'/i/'+SLUG}
+  {id:'guest', who:'guest', label:'Invite link', sub:'What guests see and reply on', url:'/i/'+SLUG},
+  {id:'guesthome', who:'guest', label:'My invites', sub:'Guest’s installed app: invites only', url:'/me'}
 ];
 
 const ICON = {
@@ -801,7 +844,8 @@ function vCheck(){
 }
 function counts(){
   const yes = S.rsvps.filter(r=>r.coming), no = S.rsvps.filter(r=>!r.coming);
-  return {yes:yes.length, no:no.length, people:yes.reduce((a,r)=>a+(+r.people||0),0)};
+  const kids = yes.reduce((a,r)=>a+(+r.kids||0),0), adults = yes.reduce((a,r)=>a+(+r.adults||0),0);
+  return {yes:yes.length, no:no.length, kids, adults, people:kids+adults};
 }
 function vDashboard(){
   const c = counts();
@@ -816,7 +860,7 @@ function vDashboard(){
           <p style="margin:0;font-weight:700;color:var(--muted)">${fmtDate(S.event.date,{weekday:'short',day:'numeric',month:'short'})}, ${timeRange()}</p>
         </div>
       </div>
-      <p style="margin:12px 0"><span class="tag yes">${ICON.check} ${c.people} people coming</span> <span class="tag">${S.rsvps.length} replies</span></p>
+      <p style="margin:12px 0"><span class="tag yes">${ICON.check} ${plural(c.kids,'child','children')}, ${plural(c.adults,'adult','adults')}</span> <span class="tag">${S.rsvps.length} replies</span></p>
       <div class="btns">
         <button class="btn small sun" type="button" data-go="rsvps">Replies</button>
         <button class="btn small" type="button" data-go="edit">Edit</button>
@@ -891,8 +935,20 @@ function vShare(){
     </section>
   </div>`;
 }
+function stepper(id, label, val, min, max, one, many){
+  return `<div class="field">
+      <label for="${id}">${label}</label>
+      <div class="stepper">
+        <button type="button" data-act="step" data-target="${id}" data-d="-1" data-min="${min}" data-max="${max}" data-one="${one}" data-many="${many}" aria-label="One fewer ${one}">−</button>
+        <input type="number" id="${id}" name="${id.split('-').pop()}" min="${min}" max="${max}" value="${val}" inputmode="numeric">
+        <button type="button" data-act="step" data-target="${id}" data-d="1" data-min="${min}" data-max="${max}" data-one="${one}" data-many="${many}" aria-label="One more ${one}">+</button>
+      </div>
+    </div>`;
+}
 function rsvpFields(prefix, r){
-  r = r || {name:'',coming:true,people:1,note:''};
+  if(S.draft && S.draft.prefix===prefix) r = S.draft.r;
+  r = r || {name:'',coming:true,adults:1,kids:1,note:''};
+  const ce = S.errors[prefix+'-count'];
   const e = S.errors;
   return `<div class="field">
       <label for="${prefix}-name">Your name</label>
@@ -906,14 +962,14 @@ function rsvpFields(prefix, r){
         <label><input type="radio" name="coming" value="no" ${!r.coming?'checked':''}> Sorry, can’t come</label>
       </div>
     </fieldset>
-    <div class="field" data-people ${r.coming?'':'hidden'}>
-      <label for="${prefix}-people">How many people, including you?</label>
-      <div class="stepper">
-        <button type="button" data-act="step" data-target="${prefix}-people" data-d="-1" aria-label="One fewer person">−</button>
-        <input type="number" id="${prefix}-people" name="people" min="1" max="20" value="${Math.max(1,+r.people||1)}" inputmode="numeric">
-        <button type="button" data-act="step" data-target="${prefix}-people" data-d="1" aria-label="One more person">+</button>
+    <fieldset data-people ${r.coming?'':'hidden'} ${ce?`aria-describedby="${prefix}-count-err"`:''}>
+      <legend>Who’s coming?</legend>
+      <div class="row2">
+        ${stepper(prefix+'-kids','Children',+r.kids||0,0,15,'child','children')}
+        ${stepper(prefix+'-adults','Adults (incl. you)',+r.adults||0,0,10,'adult','adults')}
       </div>
-    </div>
+      ${ce?`<span class="err" id="${prefix}-count-err" style="margin-top:6px">${ICON.cross} ${esc(ce)}</span>`:''}
+    </fieldset>
     <div class="field">
       <label for="${prefix}-note">Note for the host (optional)</label>
       <textarea id="${prefix}-note" name="note" maxlength="500" aria-describedby="${prefix}-note-hint">${esc(r.note)}</textarea>
@@ -927,7 +983,7 @@ function vGuest(){
   let rsvpBlock;
   if(reply && !S.guestEdit){
     rsvpBlock = `<div class="saved ${reply.coming?'':'no'}">
-      <p style="margin:0;font-weight:900;font-size:1.1rem">${reply.coming?ICON.check+' You replied: coming, '+reply.people+(reply.people==1?' person':' people'):ICON.cross+' You replied: can’t come'}</p>
+      <p style="margin:0;font-weight:900;font-size:1.1rem">${reply.coming?ICON.check+' You replied: coming with '+groupText(reply):ICON.cross+' You replied: can’t come'}</p>
       <p style="margin:0;font-weight:600">As “${esc(reply.name)}”${reply.note?` · “${esc(reply.note)}”`:''}</p>
       <p style="margin:0;font-size:.85rem;font-weight:600">Saved on this phone. Open this link again any time to change it.</p>
       <div><button class="btn sun small" type="button" data-act="guest-edit">Change my reply</button></div>
@@ -970,7 +1026,8 @@ function vRsvps(){
     </form></li>`;
     return `<li class="rsvp">
       <div class="top-line"><span class="nm">${esc(r.name)}</span>
-        ${r.coming?`<span class="tag yes">${ICON.check} Coming · ${r.people}</span>`:`<span class="tag no">${ICON.cross} Can’t come</span>`}</div>
+        ${r.coming?`<span class="tag yes">${ICON.check} Coming</span>`:`<span class="tag no">${ICON.cross} Can’t come</span>`}</div>
+      ${r.coming?`<p class="meta" style="margin:0;color:var(--ink);font-weight:800">${groupText(r)}</p>`:''}
       ${r.note?`<p class="meta" style="margin:0">“${esc(r.note)}”</p>`:''}
       <p class="meta" style="margin:0">${r.byHost?'Edited by you':'Replied'} ${esc(r.when||'just now')}</p>
       ${S.confirmDel===r.id?`<div class="confirm" role="group" aria-label="Confirm delete"><span>Delete ${esc(r.name)}’s reply? This can’t be undone.</span>
@@ -981,9 +1038,12 @@ function vRsvps(){
   return `<h2 tabindex="-1">Who’s coming</h2>
   <p class="lede">${headline()} · ${fmtDate(S.event.date,{weekday:'short',day:'numeric',month:'short'})}</p>
   <div class="stats">
-    <div class="stat hl"><b>${c.people}</b><span>people coming</span></div>
+    <div class="stat hl"><b>${c.kids}</b><span>children coming</span></div>
+    <div class="stat hl"><b>${c.adults}</b><span>adults coming</span></div>
+    <div class="stat"><b>${c.people}</b><span>total people</span></div>
     <div class="stat"><b>${c.yes}</b><span>said yes</span></div>
     <div class="stat"><b>${c.no}</b><span>said no</span></div>
+    <div class="stat"><b>${S.rsvps.length}</b><span>replies</span></div>
   </div>
   <div class="choice" role="radiogroup" aria-label="Show replies" style="margin:14px 0">
     ${[['all','All'],['yes','Coming'],['no','Not coming']].map(([v,l])=>`<label style="min-width:0;min-height:44px;padding:6px 10px;justify-content:center"><input type="radio" name="filter" value="${v}" ${S.filter===v?'checked':''} data-act="filter"> ${l}</label>`).join('')}
@@ -993,24 +1053,52 @@ function vRsvps(){
   ${list.length?`<ul class="rsvp-list">${list.map(item).join('')}</ul>`:`<p class="card">No replies here yet.</p>`}`;
 }
 
+function vGuestHome(){
+  const mine = lsGet();
+  const server = mine && S.rsvps.find(r=>r.id===mine.id);
+  const reply = server || mine;
+  const status = reply ? (reply.coming ? `<span class="tag yes">${ICON.check} Going · ${groupText(reply)}</span>` : `<span class="tag no">${ICON.cross} Not going</span>`) : `<span class="tag sun">Not replied yet</span>`;
+  return `<h2 tabindex="-1">My invites</h2>
+  <p class="lede">Party invites you’ve opened on this phone.</p>
+  <ul class="rsvp-list">
+    <li class="card">
+      <div style="display:flex;gap:12px;align-items:center">
+        <img src="${photo()}" alt="" width="56" height="56" style="border-radius:50%;border:3px solid var(--ink);object-fit:cover;width:56px;height:56px;flex:none">
+        <div style="min-width:0"><h3>${headline()}</h3>
+        <p style="margin:0;font-weight:700;color:var(--muted)">${fmtDate(S.event.date,{weekday:'short',day:'numeric',month:'short'})}, ${timeRange()} · ${esc(S.event.venue)}</p></div>
+      </div>
+      <p style="margin:10px 0">${status}</p>
+      <button class="btn small sun" type="button" data-go="guest">Open invite<span class="sr-only">: ${headline()}</span></button>
+    </li>
+    ${OTHER_INVITES.map(o=>`<li class="card"><h3>${esc(o.title)}</h3>
+      <p style="margin:0 0 10px;font-weight:700;color:var(--muted)">${fmtDate(o.date,{weekday:'short',day:'numeric',month:'short'})}, ${esc(o.time)} · ${esc(o.venue)}</p>
+      <p style="margin:0 0 10px"><span class="tag sun">Not replied yet</span></p>
+      <button class="btn small" type="button" data-act="noop">Open invite<span class="sr-only">: ${esc(o.title)}</span></button></li>`).join('')}
+  </ul>
+  <div class="note" style="margin-top:16px"><p>Only invites sent to you appear here. Party details disappear 60 days after each party.</p></div>
+  <p style="margin-top:12px"><button class="btn link" type="button" data-go="login">Hosting a party? Sign in</button></p>`;
+}
+
 /* ---------- render ---------- */
 const host = document.getElementById('screen-host');
 let lastScreen = null;
-function banner(){
+function banner(isGuest){
   if(S.standalone || S.installed) return '';
-  if(S.browser==='ios') return `<aside class="install" aria-label="Install the app"><span class="appicon" aria-hidden="true">P!</span><p><b>Add Party Pop to your Home Screen</b>Tap ${ICON.share}<span class="sr-only">Share</span> then “Add to Home Screen”.</p></aside>`;
-  return `<aside class="install" aria-label="Install the app"><span class="appicon" aria-hidden="true">P!</span><p><b>Get the Party Pop app</b>One tap to your parties. No app store.</p><button class="btn" type="button" data-act="install">Install</button></aside>`;
+  const pitch = isGuest ? 'Keep your invites on your home screen' : 'Get the Party Pop app';
+  if(S.browser==='ios') return `<aside class="install" aria-label="Install the app"><span class="appicon" aria-hidden="true">P!</span><p><b>${pitch}</b>Tap ${ICON.share}<span class="sr-only">Share</span> then “Add to Home Screen”.</p></aside>`;
+  return `<aside class="install" aria-label="Install the app"><span class="appicon" aria-hidden="true">P!</span><p><b>${pitch}</b>${isGuest?'Find the time, place and your reply in one tap.':'One tap to your parties. No app store.'}</p><button class="btn" type="button" data-act="install">Install</button></aside>`;
 }
 function render(){
   const scr = SCREENS.find(s=>s.id===S.screen);
-  const view = {login:vLogin,check:vCheck,dashboard:vDashboard,edit:vEdit,share:vShare,rsvps:vRsvps,guest:vGuest}[S.screen]();
+  const view = {login:vLogin,check:vCheck,dashboard:vDashboard,edit:vEdit,share:vShare,rsvps:vRsvps,guest:vGuest,guesthome:vGuestHome}[S.screen]();
   const isGuest = scr.who==='guest';
-  const b = banner();
+  const b = banner(isGuest);
   host.innerHTML = `
     <div class="appbar"><span class="logo">Party Pop!</span>${S.authed && !isGuest ? `<span class="who-badge">Host</span>`: isGuest?'<span class="who-badge">Guest view</span>':''}</div>
     ${S.toast?`<div class="toast" aria-hidden="true">${S.toast}</div>`:''}
     <div class="scroll ${b?'with-banner':''}" id="scroll">${view}
       ${S.authed && !isGuest && S.screen!=='dashboard' ? `<p style="margin-top:20px"><button class="btn link" type="button" data-go="dashboard">← Back to my parties</button></p>`:''}
+      ${S.screen==='guest' ? `<p style="margin-top:20px"><button class="btn link" type="button" data-go="guesthome">← All my invites</button></p>`:''}
     </div>
     ${b}
     ${S.installSheet?`<div class="sheet-bg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-h">
@@ -1033,7 +1121,7 @@ function render(){
 }
 function go(id){
   if(['dashboard','edit','share','rsvps'].includes(id) && !S.authed){ S.authed = true; if(!S.email) S.email='you@example.com'; }
-  S.screen = id; S.errors = {}; S.editing=null; S.confirmDel=null; S.adding=false; S.guestEdit=false;
+  S.screen = id; S.errors = {}; S.draft = null; S.editing=null; S.confirmDel=null; S.adding=false; S.guestEdit=false;
   render();
 }
 let toastT;
@@ -1051,12 +1139,20 @@ function readRsvp(form, prefix){
   const fd = new FormData(form);
   const name = (fd.get('name')||'').toString().trim();
   const coming = fd.get('coming')==='yes';
-  let people = Math.min(20, Math.max(1, parseInt(fd.get('people'),10)||1));
-  return {name, coming, people: coming?people:0, note:(fd.get('note')||'').toString().trim()};
+  const kids = Math.min(15, Math.max(0, parseInt(fd.get('kids'),10)||0));
+  const adults = Math.min(10, Math.max(0, parseInt(fd.get('adults'),10)||0));
+  return {name, coming, kids: coming?kids:0, adults: coming?adults:0, note:(fd.get('note')||'').toString().trim()};
 }
-function invalid(prefix, msg){
-  S.errors = {[prefix+'-name']: msg}; render();
-  const el = document.getElementById(prefix+'-name'); if(el) el.focus();
+function check(prefix, r, nameMsg){
+  S.draft = {prefix, r};
+  if(!r.name){ invalid(prefix,'name',nameMsg); return false; }
+  if(r.coming && r.kids+r.adults<1){ invalid(prefix,'count','Add at least one child or adult, or choose “Sorry, can’t come”.', prefix+'-kids'); return false; }
+  S.draft = null;
+  return true;
+}
+function invalid(prefix, field, msg, focusId){
+  S.errors = {[prefix+'-'+field]: msg}; render();
+  const el = document.getElementById(focusId || prefix+'-name'); if(el) el.focus();
 }
 document.addEventListener('click', e=>{
   const g = e.target.closest('[data-go]');
@@ -1072,16 +1168,17 @@ document.addEventListener('click', e=>{
   }
   else if(act==='step'){
     const inp = document.getElementById(a.dataset.target);
-    inp.value = Math.min(20, Math.max(1, (parseInt(inp.value,10)||1) + (+a.dataset.d)));
-    document.getElementById('live').textContent = inp.value + (inp.value==1?' person':' people');
+    inp.value = Math.min(+a.dataset.max, Math.max(+a.dataset.min, (parseInt(inp.value,10)||0) + (+a.dataset.d)));
+    document.getElementById('live').textContent = plural(+inp.value, a.dataset.one, a.dataset.many);
   }
+  else if(act==='noop'){ toast('Example invite: open Maya’s to try it'); }
   else if(act==='guest-edit'){ S.guestEdit=true; render(); const n=document.getElementById('g-name'); n&&n.focus(); }
-  else if(act==='guest-cancel'){ S.guestEdit=false; S.errors={}; render(); }
+  else if(act==='guest-cancel'){ S.guestEdit=false; S.errors={}; S.draft=null; render(); }
   else if(act==='install'){ S.installSheet=true; render(); }
   else if(act==='sheet-no'){ S.installSheet=false; render(); }
   else if(act==='sheet-yes'){ S.installSheet=false; S.installed=true; toast('Installed. Party Pop is on your home screen.'); }
   else if(act==='edit-r'){ S.editing=a.dataset.id; S.confirmDel=null; render(); const n=document.getElementById('h-'+a.dataset.id+'-name'); n&&n.focus(); }
-  else if(act==='cancel-edit'){ const id=S.editing; S.editing=null; S.errors={}; render(); const b=host.querySelector(`[data-act="edit-r"][data-id="${id}"]`); b&&b.focus(); }
+  else if(act==='cancel-edit'){ const id=S.editing; S.editing=null; S.errors={}; S.draft=null; render(); const b=host.querySelector(`[data-act="edit-r"][data-id="${id}"]`); b&&b.focus(); }
   else if(act==='del'){ S.confirmDel=a.dataset.id; render(); const b=host.querySelector('[data-act="del-no"]'); b&&b.focus(); }
   else if(act==='del-no'){ const id=S.confirmDel; S.confirmDel=null; render(); const b=host.querySelector(`[data-act="del"][data-id="${id}"]`); b&&b.focus(); }
   else if(act==='del-yes'){
@@ -1091,7 +1188,7 @@ document.addEventListener('click', e=>{
     toast(`Deleted ${r?r.name:'reply'}`); host.querySelector('h2')?.focus();
   }
   else if(act==='add'){ S.adding=true; render(); document.getElementById('ha-name')?.focus(); }
-  else if(act==='cancel-add'){ S.adding=false; S.errors={}; render(); }
+  else if(act==='cancel-add'){ S.adding=false; S.errors={}; S.draft=null; render(); }
 });
 document.addEventListener('change', e=>{
   const t = e.target;
@@ -1139,7 +1236,7 @@ document.addEventListener('submit', e=>{
     toast('Invite saved. Guests see it now.');
   }
   else if(kind==='guest'){
-    const r = readRsvp(form,'g'); if(!r.name) return invalid('g','Enter your name so the host knows who’s coming.');
+    const r = readRsvp(form,'g'); if(!check('g', r, 'Enter your name so the host knows who’s coming.')) return;
     const mine = lsGet(); const id = mine ? mine.id : 'g'+Date.now().toString(36);
     const rec = {id, ...r, when:'just now', byHost:false};
     const i = S.rsvps.findIndex(x=>x.id===id); if(i>=0) S.rsvps[i]=rec; else S.rsvps.unshift(rec);
@@ -1148,14 +1245,14 @@ document.addEventListener('submit', e=>{
     { const h=host.querySelector('#rsvp-h'); if(h) document.getElementById('scroll').scrollTop = h.offsetTop - 12; }
   }
   else if(kind==='host-edit'){
-    const id=form.dataset.id; const r=readRsvp(form,'h-'+id); if(!r.name) return invalid('h-'+id,'Name can’t be empty.');
+    const id=form.dataset.id; const r=readRsvp(form,'h-'+id); if(!check('h-'+id, r, 'Name can’t be empty.')) return;
     const i=S.rsvps.findIndex(x=>x.id===id); S.rsvps[i]={...S.rsvps[i], ...r, when:'just now', byHost:true};
     const mine=lsGet(); if(mine && mine.id===id) {/* guest sees server copy via S.rsvps */}
     S.editing=null; S.errors={}; toast('Reply updated');
     host.querySelector(`[data-act="edit-r"][data-id="${id}"]`)?.focus();
   }
   else if(kind==='host-add'){
-    const r=readRsvp(form,'ha'); if(!r.name) return invalid('ha','Enter a name for this reply.');
+    const r=readRsvp(form,'ha'); if(!check('ha', r, 'Enter a name for this reply.')) return;
     S.rsvps.unshift({id:'m'+Date.now().toString(36), ...r, when:'just now', byHost:true}); S.adding=false; S.errors={}; toast('Reply added');
   }
 });
