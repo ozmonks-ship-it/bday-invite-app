@@ -26,6 +26,7 @@
   --shadow-sm:3px 3px 0 var(--ink);
 }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{
   background:var(--sky);
   background-image:radial-gradient(var(--dot) 1.6px,transparent 1.7px);
@@ -62,7 +63,7 @@ body{
 .flow button:hover{background:var(--sun-soft)}
 .flow button[aria-current="true"]{background:var(--sun);box-shadow:var(--shadow-sm)}
 .flow .who{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:999px;color:var(--paper);font-weight:900;flex:none}
-.who.host{background:var(--zap)}.who.guest{background:var(--pow)}
+.who.host{background:var(--zap)}.who.guest{background:var(--pow)}.who.device{background:var(--go)}
 .flow small{display:block;font-weight:600;color:var(--muted);font-size:.85rem}
 .sim{display:grid;gap:12px}
 .switch{display:flex;gap:12px;align-items:flex-start;font-weight:700;cursor:pointer}
@@ -149,6 +150,16 @@ legend{font-weight:900;padding:0 6px}
 .og-img .phs .ph{flex:1;min-width:0}
 .og-img .phs .ph + .ph{margin-left:-14%}
 .kid{display:grid;gap:12px;background:var(--sun-soft)}
+.homescreen{flex:1;background:linear-gradient(160deg,#1B4FD1,#6B2FB3);padding:28px 16px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px 8px;align-content:start;border-radius:0 0 34px 34px;overflow-y:auto}
+.homescreen h2{grid-column:1/-1;margin:0;color:#FFFFFF;font-size:1rem;font-weight:800}
+.hs-app{display:grid;justify-items:center;gap:6px;background:none;border:0;color:#FFFFFF;font:inherit;font-size:.74rem;font-weight:800;cursor:pointer;text-align:center;padding:4px 0;min-width:0;text-shadow:0 1px 2px rgba(0,0,0,.6);border-radius:12px}
+.hs-app span:last-child{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hs-icon{width:58px;height:58px;border-radius:15px;display:grid;place-items:center;overflow:hidden;border:2px solid rgba(255,255,255,.7);font-family:var(--display);font-size:1.5rem;color:var(--ink);text-shadow:none}
+.hs-icon.kids{display:flex;background:var(--sun)}
+.hs-icon.kids img{flex:1;min-width:0;height:100%;object-fit:cover}
+.hs-icon.pp{background:var(--sun);color:var(--pow)}
+.hs-tip{grid-column:1/-1;margin:8px 0 0;color:#FFFFFF;font-weight:700;font-size:.85rem;background:rgba(23,19,31,.45);border-radius:12px;padding:10px 12px}
+.homebtn{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 .sec{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:900;margin:20px 0 8px}
 .flywheel{background:var(--sky);background-image:radial-gradient(var(--dot) 1.6px,transparent 1.7px);background-size:12px 12px;display:grid;gap:8px}
 .flywheel p{margin:0;font-weight:700}
@@ -295,8 +306,8 @@ legend{font-weight:900;padding:0 6px}
       </nav>
       <div class="sim">
         <h3>Simulate the device</h3>
-        <label class="switch"><input type="checkbox" id="sim-standalone">
-          <span>Opened from the installed app<small>The install banner disappears and the browser address bar goes away.</small></span></label>
+        <label class="switch"><input type="checkbox" id="sim-over">
+          <span>The party date has passed<small>The invite page and the invite app switch to the “thanks for coming” screen.</small></span></label>
         <label class="selectrow" for="sim-browser">Browser or app
           <select id="sim-browser">
             <option value="chrome">Chrome on Android (install button)</option>
@@ -308,7 +319,7 @@ legend{font-weight:900;padding:0 6px}
         <button class="btn small" type="button" id="reset">Reset prototype data</button>
       </div>
       <div class="note">
-        <p><b>Try this:</b> open <b>Guest · Invite link</b>, reply “Yes” with 2 children and 1 adult, then switch to <b>Host · Who’s coming</b>. Go back to the guest link and you’ll see your saved reply, ready to change. <b>Guest · My invites</b> is what a guest sees in their installed app. The sample is a sibling party; add or remove children in <b>Edit invite</b>.</p>
+        <p><b>Try this:</b> open <b>Guest · Invite link</b>, reply “Yes” with 2 children and 1 adult, then switch to <b>Host · Who’s coming</b>. Go back to the guest link and you’ll see your saved reply, ready to change. On the invite, tap <b>Add</b> in the bottom banner to put the party on the phone’s <b>Home screen</b> as its own app. Signed-in pages offer <b>Party Pop</b> as a separate app. The sample is a sibling party; add or remove children in <b>Edit invite</b>.</p>
         <p style="margin-top:8px"><b>Guest to host:</b> reply as a guest, tap <b>Make my own invite</b>, create an account, and your dashboard shows the party you’re invited to plus an empty <b>Hosting</b> list ready for your first invite.</p>
       </div>
     </div>
@@ -322,6 +333,7 @@ legend{font-weight:900;padding:0 6px}
         </div>
         <div class="screen-host" id="screen-host"></div>
       </div>
+      <div class="homebtn"><button class="btn small" type="button" data-go="home">Go to home screen</button></div>
       <p class="caption" id="phone-caption"></p>
     </div>
   </div>
@@ -342,7 +354,7 @@ legend{font-weight:900;padding:0 6px}
         <li><a href="#p-rsvp">Guest RSVP identity</a></li>
         <li><a href="#p-auth">Magic link login</a></li>
         <li><a href="#p-pwa">PWA &amp; install banner</a></li>
-        <li><a href="#p-guestapp">One app, hosts &amp; guests</a></li>
+        <li><a href="#p-guestapp">Invite apps &amp; Party Pop app</a></li>
         <li><a href="#p-growth">Guest-to-host loop</a></li>
         <li><a href="#p-iab">Links opened in chat apps</a></li>
         <li><a href="#p-a11y">Accessibility</a></li>
@@ -358,7 +370,7 @@ legend{font-weight:900;padding:0 6px}
 
     <article class="panel doc">
       <header>
-        <div class="eyebrow">Product requirements · v1.3 draft</div>
+        <div class="eyebrow">Product requirements · v1.4 draft</div>
         <h1>Party Pop: shareable party invites with RSVPs</h1>
         <div class="metaline">
           <span class="tag sun">Status: Draft for review</span>
@@ -475,12 +487,13 @@ legend{font-weight:900;padding:0 6px}
             <tr><td class="req">G-02</td><td>Shows each child’s photo and a headline: “Maya is turning 6!” for one child, “Maya &amp; Leo are turning 6 and 4!” for siblings, date and time, venue with “Open in Google Maps”, parking with “Parking in Google Maps”, how to get there, host’s message, reply-by date.</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">G-03</td><td>“Add to calendar” (downloads an .ics file, plus a Google Calendar link).</td><td><span class="pri should">Should</span></td></tr>
             <tr><td class="req">G-04</td><td>RSVP form: name (required, 1–80 chars), coming yes/no (required), number of <b>children</b> (0–15) and number of <b>adults</b> including themselves (0–10), shown as two labelled steppers. When coming, the total must be at least 1. Optional note to host (max 500 chars, e.g. allergies).</td><td><span class="pri must">Must</span></td></tr>
-            <tr><td class="req">G-05</td><td>After submitting, the reply and a private guest token are kept in the browser’s local storage, keyed by event slug. Every invite opened is also added to the device’s invite list (used by the guest app, G-10).</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">G-05</td><td>After submitting, the reply and a private guest token are kept in the browser’s local storage, keyed by event slug. Every invite opened is also added to the device’s invite list (shown on <code>/me</code>).</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">G-06</td><td>Returning to the same link on the same browser shows “You replied: …” with a “Change my reply” button. Changes update the same record, not a new one.</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">G-07</td><td>If the host has edited the guest’s reply, the guest sees the host’s version (the server copy wins over local storage).</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">G-08</td><td>After the reply-by date, guests can still reply, with a note that the host may already have finalised numbers. Host can switch replies off.</td><td><span class="pri should">Should</span></td></tr>
             <tr><td class="req">G-09</td><td>Guests never see other guests’ names or replies.</td><td><span class="pri must">Must</span></td></tr>
-            <tr><td class="req">G-10</td><td>Guests see the install banner on invite pages. When a guest (not signed in) opens the installed app, it shows <b>My invites</b>: only the invites opened on that device, each with date, venue and their reply status. No host features are shown; the routes to hosting are the “Make my own invite” prompts (§9c) and a “Sign in” link.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">G-10</td><td>On an invite page, the bottom banner offers that invite as its own home-screen app, named after the party (§9b). <b>My invites</b> (<code>/me</code>) is a browser page listing invites opened on that device; it is not an installable app.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">G-12</td><td>After the party date, the invite page and invite app show a “Thanks for coming” screen with the “Your turn next?” prompt and how to remove the app. After the 60-day deletion, the invite app shows only this screen, with no personal data.</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">G-11</td><td>Invites in the guest app are removed when the host deletes the event or after the 60-day auto-deletion. Guests can remove an invite from their list.</td><td><span class="pri must">Must</span></td></tr>
           </tbody>
         </table></div>
@@ -549,12 +562,12 @@ legend{font-weight:900;padding:0 6px}
         <h2><span class="n">9</span>PWA &amp; install banner</h2>
         <h3>App shell</h3>
         <ul>
-          <li>Web app manifest: name, short name, <code>display: standalone</code>, <code>start_url: /dashboard?source=pwa</code>, theme and background colours, 192 px and 512 px icons plus a maskable icon, and screenshots for the richer Android install sheet.</li>
+          <li>Two kinds of installable app, each with its own manifest: one app per invite, and the Party Pop app (see §9b).</li>
           <li>Service worker (Serwist): precache app shell and fonts; network-first for invite pages with cache fallback, so a guest who opened the invite can see the address at the venue without signal; offline page for everything else.</li>
           <li>Never cache authenticated API responses in the shared cache.</li>
         </ul>
         <h3>Install banner behaviour</h3>
-        <p class="callout"><b>Decision.</b> The banner is always shown in the browser, on every page, to hosts and guests alike. It has no close button. It is hidden only when the page runs as the installed app, or after a successful install in the current session.</p>
+        <p class="callout"><b>Decision.</b> The banner has no close button. It appears in the browser on every page that has an app to offer: invite pages offer that invite’s app, and signed-in pages offer Party Pop. Sign-in pages and My invites have no app to offer and show no banner. Inside any installed app there is no banner.</p>
         <div class="tablewrap"><table>
           <thead><tr><th scope="col">Situation</th><th scope="col">Banner</th></tr></thead>
           <tbody>
@@ -562,37 +575,43 @@ legend{font-weight:900;padding:0 6px}
             <tr><td>Chromium browsers (Android Chrome, Edge, Samsung Internet, desktop Chrome)</td><td>Capture <code>beforeinstallprompt</code>, call <code>preventDefault()</code>, show the banner with an “Install” button that calls <code>prompt()</code>.</td></tr>
             <tr><td>Safari on iPhone and iPad (no install event)</td><td>Banner shows the steps: tap Share, then “Add to Home Screen”, with the Share icon drawn inline.</td></tr>
             <tr><td>Browsers without install support (for example Firefox on Android)</td><td>Banner shows the browser-menu steps for “Install” or “Add to Home screen”.</td></tr>
-            <tr><td>After <code>appinstalled</code> fires</td><td>Banner removed for the rest of the session.</td></tr>
+            <tr><td>App already installed (from <code>appinstalled</code> this session, or <code>getInstalledRelatedApps()</code> where supported)</td><td>Banner turns into “{name} is on your home screen” with an <b>Open</b> button.</td></tr>
           </tbody>
         </table></div>
-        <p>Wording depends on the page: host pages say “Get the Party Pop app”; invite pages say “Keep your invites on your home screen”.</p>
+        <p>Wording depends on the page: invite pages say “Add Maya &amp; Leo’s party to your home screen”, with the party’s own icon; signed-in pages say “Get the Party Pop app”.</p>
         <p>Layout: fixed to the bottom of the viewport, full width, with <code>env(safe-area-inset-bottom)</code> padding. The page reserves its height as bottom padding and sets <code>scroll-padding-bottom</code> so nothing, including a focused field, is hidden behind it. It is a labelled landmark (<code>&lt;aside aria-label="Install the app"&gt;</code>), not a dialog: it never takes focus and does not block the page. Standalone detection runs before first paint (inline script setting a class on <code>&lt;html&gt;</code>) so the banner never flashes in the installed app.</p>
       </section>
 
       <section id="p-guestapp">
-        <h2><span class="n">9b</span>One app for hosts and guests</h2>
-        <p>There is one PWA. The same person can host one party and be a guest at another, so the app adapts to who is using it rather than splitting into two apps.</p>
+        <h2><span class="n">9b</span>Invite apps and the Party Pop app</h2>
+        <p>Guests can add each invite to their home screen as its own app, named after the party. Once someone signs in to host, they can also add Party Pop as a separate app. One account still covers both roles.</p>
         <div class="tablewrap"><table>
-          <thead><tr><th scope="col">Who opens the app</th><th scope="col">Home screen</th><th scope="col">Can do</th></tr></thead>
+          <thead><tr><th scope="col"></th><th scope="col">Invite app (one per party)</th><th scope="col">Party Pop app</th></tr></thead>
           <tbody>
-            <tr><td>Not signed in</td><td><b>My invites</b> (<code>/me</code>): invites opened on this device</td><td>Read invites, reply, change replies with the device token, start “Make my own invite”</td></tr>
-            <tr><td>Signed in</td><td><b>My parties</b> (<code>/dashboard</code>): Hosting and Invited to</td><td>Everything above, plus create and manage parties; replies follow the account to any device</td></tr>
+            <tr><td>Offered</td><td>On that invite’s page, in the browser, to anyone</td><td>On signed-in pages, in the browser</td></tr>
+            <tr><td>Name</td><td><code>name</code> “Maya &amp; Leo’s party”, <code>short_name</code> “Maya &amp; Leo”</td><td>“Party Pop”</td></tr>
+            <tr><td>Icon</td><td>Made from the children’s photos (192, 512 and maskable), illustration if no photo</td><td>Party Pop logo</td></tr>
+            <tr><td><code>id</code> and <code>scope</code></td><td><code>/i/{slug}/</code></td><td><code>/app/</code></td></tr>
+            <tr><td><code>start_url</code></td><td><code>/i/{slug}/?source=pwa</code></td><td><code>/app?source=pwa</code></td></tr>
+            <tr><td>Manifest</td><td><code>/i/{slug}/manifest.webmanifest</code>, generated per invite</td><td><code>/app/manifest.webmanifest</code></td></tr>
+            <tr><td>Shows</td><td>That invite only: details, maps, the guest’s reply. Links elsewhere open in the browser.</td><td>My parties: Hosting and Invited to. Invites open inside it at <code>/app/invites/{slug}</code>.</td></tr>
           </tbody>
         </table></div>
         <ul>
-          <li>The manifest’s <code>start_url</code> is <code>/app</code>. It sends a signed-in user to <code>/dashboard</code> and anyone else to <code>/me</code>.</li>
-          <li><code>/me</code> reads the device’s invite list from local storage and refreshes it with <code>get_invites(slugs[])</code>, which returns only public fields for the slugs given. Nobody can list or discover other invites.</li>
-          <li>For signed-in users, “Invited to” comes from <code>saved_invites</code> and their claimed replies, so it is the same on every device.</li>
-          <li>Opening an invite you host shows the guest view with a “You’re the host · Manage replies” bar.</li>
+          <li><b>No overlapping scopes.</b> All host pages live under <code>/app/</code> and invites under <code>/i/{slug}/</code>. If Party Pop covered the whole site, Chrome would treat the invite apps as part of it and refuse or redirect their installs.</li>
+          <li><b>iPhone names and icons.</b> Each invite page also sets <code>apple-mobile-web-app-title</code> and <code>apple-touch-icon</code> to the party’s name and icon. The guest can edit the name when adding it.</li>
+          <li><b>Name and icon changes.</b> If the host renames the children or changes photos later, iPhone keeps the old name and icon; Android may update after asking the user. The app’s content is always current.</li>
+          <li><b>My invites</b> (<code>/me</code>) stays a browser page for guests without an account. Signed-in users get “Invited to” inside Party Pop, the same on every device.</li>
         </ul>
-        <h3>iPhone storage hand-off</h3>
-        <p>On iPhone and iPad, a home-screen app gets its own storage, separate from Safari. A guest who replied in Safari would open the installed app to an empty list. To carry their invites across:</p>
-        <ol>
-          <li>On invite pages, the browser creates a short-lived hand-off code holding the device’s invite list and tokens (<code>create_handoff(payload)</code>, valid 30 minutes, single use).</li>
-          <li>The page points <code>&lt;link rel="manifest"&gt;</code> at <code>/manifest.webmanifest?h={code}</code>, whose <code>start_url</code> is <code>/app?h={code}</code>.</li>
-          <li>On first launch the app redeems the code, saves the invites and tokens to its own storage, and removes the code from the URL.</li>
-        </ol>
-        <p>Signed-in users don’t need this: signing in inside the app loads everything from their account. On Android and desktop Chromium the installed app shares storage with the browser.</p>
+        <h3>Storage, iPhone hand-off and replies</h3>
+        <ul>
+          <li>On iPhone each home-screen app gets its own storage, separate from Safari and from each other. On first launch an invite app redeems a hand-off code (created by the page when the guest taps Add) that carries that invite’s reply token.</li>
+          <li>For a guest whose replies belong to an account, the hand-off carries a grant to change that one reply only, not a full sign-in.</li>
+          <li>On Android and desktop all apps from the site share storage. Removing one app can prompt the user to clear data for the whole site, which would remove device-only replies and sign them out of Party Pop. After a reply, guests are offered “Save your reply to an account” so it survives this.</li>
+        </ul>
+        <h3>Device test first (milestone M0)</h3>
+        <p>Before building this, check on a real iPhone and Android phone: two invite apps plus Party Pop install as three separate apps; each keeps its name and icon; opening an invite link inside Party Pop doesn’t hijack an invite app; and what removing one app does to the others’ data.</p>
+        <p class="callout"><b>Fallback if the test fails.</b> Serve each invite from its own subdomain (for example <code>mx7kq2pl.partypop.app</code>). That isolates each invite app completely, at the cost of a wildcard domain and per-subdomain hand-off.</p>
       </section>
 
       <section id="p-growth">
@@ -603,7 +622,7 @@ legend{font-weight:900;padding:0 6px}
           <tbody>
             <tr><td class="req">L-01</td><td>Invite page, after a reply is saved</td><td>Card: “Planning a party too? Make an invite like this in about 3 minutes.” Button: <b>Make my own invite</b>. Never shown before the guest has replied.</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">L-02</td><td>Invite page footer</td><td>“Made with Party Pop · Make your own invite”.</td><td><span class="pri must">Must</span></td></tr>
-            <tr><td class="req">L-03</td><td>My invites (guest home, browser and installed app)</td><td>“Throw a party of your own” card below the list.</td><td><span class="pri must">Must</span></td></tr>
+            <tr><td class="req">L-03</td><td>My invites page and the post-party screen (browser and invite app)</td><td>“Throw a party of your own” / “Your turn next?” card.</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">L-04</td><td>Sign-up screen (<code>/start?from={slug}</code>)</td><td>Email, terms checkbox, “Create my free account”. If the device holds a reply, it says that reply will move into the account.</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">L-05</td><td>After sign-up</td><td>Land on My parties with the invite they came from under “Invited to” and an empty “Hosting” list with <b>+ New party invite</b>.</td><td><span class="pri must">Must</span></td></tr>
             <tr><td class="req">L-06</td><td>Analytics</td><td>Record <code>source=invite:{slug}</code> on sign-up so we can measure which invites bring new hosts. No guest personal data is shared with the referring host.</td><td><span class="pri should">Should</span></td></tr>
@@ -684,15 +703,17 @@ legend{font-weight:900;padding:0 6px}
         <div class="tablewrap"><table>
           <thead><tr><th scope="col">Route</th><th scope="col">Who</th><th scope="col">Purpose</th></tr></thead>
           <tbody>
-            <tr><td><code>/</code></td><td>Anyone</td><td>Landing and sign-in</td></tr>
-            <tr><td><code>/auth/confirm</code></td><td>Host</td><td>Verify magic link</td></tr>
-            <tr><td><code>/dashboard</code></td><td>Host</td><td>My parties</td></tr>
-            <tr><td><code>/events/new</code>, <code>/events/[id]/edit</code></td><td>Host</td><td>Create / edit invite</td></tr>
-            <tr><td><code>/events/[id]/share</code></td><td>Host</td><td>Link, share buttons, preview</td></tr>
-            <tr><td><code>/events/[id]/rsvps</code></td><td>Host</td><td>Replies and head count</td></tr>
-            <tr><td><code>/i/[slug]</code></td><td>Guest</td><td>Invite and RSVP</td></tr>
+            <tr><td><code>/</code></td><td>Anyone</td><td>Landing page, links to sign in</td></tr>
+            <tr><td><code>/app/sign-in</code>, <code>/app/start</code></td><td>Anyone</td><td>Sign in; create an account (from an invite)</td></tr>
+            <tr><td><code>/app/auth/confirm</code></td><td>Host</td><td>Verify magic link</td></tr>
+            <tr><td><code>/app</code></td><td>Signed in</td><td>My parties: Hosting and Invited to</td></tr>
+            <tr><td><code>/app/events/new</code>, <code>/app/events/[id]/edit</code></td><td>Host</td><td>Create / edit invite</td></tr>
+            <tr><td><code>/app/events/[id]/share</code></td><td>Host</td><td>Link, share buttons, preview</td></tr>
+            <tr><td><code>/app/events/[id]</code></td><td>Host</td><td>Party page: replies and head count</td></tr>
+            <tr><td><code>/app/invites/[slug]</code></td><td>Signed in</td><td>An invite viewed inside Party Pop</td></tr>
+            <tr><td><code>/i/[slug]/</code></td><td>Guest</td><td>Invite and RSVP; scope of that invite’s app</td></tr>
+            <tr><td><code>/i/[slug]/manifest.webmanifest</code>, <code>/i/[slug]/icon</code></td><td>Browsers</td><td>Per-invite app name and icons</td></tr>
             <tr><td><code>/i/[slug]/opengraph-image</code></td><td>Crawlers</td><td>Link preview image</td></tr>
-            <tr><td><code>/app</code></td><td>Installed app</td><td>Start URL; routes host or guest</td></tr>
             <tr><td><code>/me</code></td><td>Guest</td><td>My invites (this device only)</td></tr>
           </tbody>
         </table></div>
@@ -817,6 +838,7 @@ create policy "own replies" on rsvps for all
         <div class="tablewrap"><table>
           <thead><tr><th scope="col">Milestone</th><th scope="col">Scope</th></tr></thead>
           <tbody>
+            <tr><td>M0 Device test (1 day)</td><td>Throwaway test site: two invite apps plus Party Pop on a real iPhone and Android phone. Confirms separate installs, names and icons, scope behaviour, and what removing one app does (§9b).</td></tr>
             <tr><td>M1 Foundation</td><td>Next.js app on Vercel, Supabase project, schema and RLS, magic link + code sign-in, design tokens and core components.</td></tr>
             <tr><td>M2 Create &amp; share</td><td>Invite editor with siblings and photo pipeline, breadcrumbs, dashboard, public invite page, OG image, share screen.</td></tr>
             <tr><td>M3 RSVP</td><td>Guest form, token flow, local storage, change-reply flow, host reply list with edit / delete / add, claiming replies on sign-up.</td></tr>
@@ -830,8 +852,8 @@ create policy "own replies" on rsvps for all
         <h2><span class="n">17</span>Decisions &amp; open questions</h2>
         <h3>Decided</h3>
         <ul>
-          <li>The install banner is always shown in the browser and cannot be dismissed.</li>
-          <li>Guests see the banner too. Their installed app shows only the invites they’ve received.</li>
+          <li>The install banner can’t be dismissed. It shows on every browser page that has an app to offer.</li>
+          <li>Each invite can be added to the home screen as its own app, named after the party. Party Pop is a separate app, offered once signed in.</li>
           <li>Replies record children and adults separately.</li>
           <li>One invite can cover siblings (up to 4), each with their own name, age and photo.</li>
           <li>No head-count cap; replies stay open unless the host switches them off.</li>
@@ -887,7 +909,7 @@ const groupText = r => [r.kids ? plural(r.kids,'child','children') : '', r.adult
 
 const S = {
   screen:'login', authed:false, email:'', codeMode:false,
-  standalone:false, installed:false, browser:'chrome', installSheet:false,
+  app:null, apps:[], partyOver:false, browser:'chrome', installSheet:null,
   events: [], cur:0, me:'priya', claimed:false,
   editing:null, confirmDel:null, adding:false,
   guestEdit:false, errors:{}, toast:'', filter:'all'
@@ -895,6 +917,7 @@ const S = {
 // The prototype keeps several events; host screens act on S.events[S.cur]
 const freshEvents = () => [{...structuredClone(SAMPLE_EVENT), slug:SLUG, owner:'priya', rsvps:structuredClone(SAMPLE_RSVPS)}];
 S.events = freshEvents();
+Object.defineProperty(S, 'standalone', {get(){ return S.app != null; }});
 Object.defineProperty(S, 'event', {get(){ return S.events[S.cur]; }});
 Object.defineProperty(S, 'rsvps', {get(){ return S.event.rsvps; }, set(v){ S.event.rsvps = v; }});
 function withEvent(i, fn){ const prev = S.cur; S.cur = i; try{ return fn(); } finally { S.cur = prev; } }
@@ -927,15 +950,16 @@ function headline(){
 }
 
 const SCREENS = [
-  {id:'login', who:'host', label:'Sign in', sub:'Magic link by email', url:'/'},
-  {id:'check', who:'host', label:'Check your email', sub:'Link or 6-digit code', url:'/login/check-email'},
-  {id:'dashboard', who:'host', label:'My parties', sub:'Events and reply counts', url:'/dashboard'},
-  {id:'edit', who:'host', label:'Edit invite', sub:'Photo, time, place, parking', url:'/events/maya-leo/edit'},
-  {id:'share', who:'host', label:'Share link', sub:'Copy, WhatsApp, chat preview', url:'/events/maya-leo/share'},
-  {id:'rsvps', who:'host', label:'Who’s coming', sub:'Head count, edit replies', url:'/events/maya-leo/rsvps'},
-  {id:'guest', who:'guest', label:'Invite link', sub:'What guests see and reply on', url:'/i/'+SLUG},
-  {id:'guesthome', who:'guest', label:'My invites', sub:'Not signed in: invites only', url:'/me'},
-  {id:'signup', who:'guest', label:'Make my own party', sub:'Guest becomes a host', url:'/start?from='+SLUG}
+  {id:'login', who:'host', label:'Sign in', sub:'Magic link by email', url:'/app/sign-in'},
+  {id:'check', who:'host', label:'Check your email', sub:'Link or 6-digit code', url:'/app/sign-in/check-email'},
+  {id:'dashboard', who:'host', label:'My parties', sub:'Hosting and invited to', url:'/app'},
+  {id:'edit', who:'host', label:'Edit invite', sub:'Photo, time, place, parking', url:'/app/events/maya-leo/edit'},
+  {id:'share', who:'host', label:'Share link', sub:'Copy, WhatsApp, chat preview', url:'/app/events/maya-leo/share'},
+  {id:'rsvps', who:'host', label:'Who’s coming', sub:'Head count, edit replies', url:'/app/events/maya-leo'},
+  {id:'guest', who:'guest', label:'Invite link', sub:'Reply, then add it to your home screen', url:'/i/'+SLUG+'/'},
+  {id:'guesthome', who:'guest', label:'My invites', sub:'Browser page, not signed in', url:'/me'},
+  {id:'signup', who:'guest', label:'Make my own party', sub:'Guest becomes a host', url:'/app/start?from='+SLUG},
+  {id:'home', who:'device', label:'Home screen', sub:'Invite apps and the Party Pop app', url:''}
 ];
 
 const ICON = {
@@ -1166,6 +1190,7 @@ function rsvpFields(prefix, r){
     </div>`;
 }
 function vGuest(){
+  if(S.partyOver) return vPartyOver();
   const ev = S.event, mine = lsGet();
   const server = mine && S.rsvps.find(r=>r.id===mine.id);
   const reply = server || mine;
@@ -1247,10 +1272,22 @@ function vRsvps(){
 
 function flywheel(context){
   return `<div class="card flywheel">
-    <h3>${context==='after-reply' ? 'Planning a party too?' : 'Throw a party of your own'}</h3>
+    <h3>${context==='after-reply' ? 'Planning a party too?' : context==='after-party' ? 'Your turn next?' : 'Throw a party of your own'}</h3>
     <p>Make an invite like this in about 3 minutes, share one link and watch the replies come in. It’s free.</p>
     <div><button class="btn primary" type="button" data-go="signup">Make my own invite</button></div>
   </div>`;
+}
+function vPartyOver(){
+  return `<div class="hero">
+      <span class="pow">THANKS FOR COMING!</span>
+      ${photos()}
+      <h2 tabindex="-1">${esc(names())}’s party is over</h2>
+      <p class="msg">${S.event.kids.length > 1 ? 'They' : esc(S.event.kids[0].name)} had a brilliant time. Thank you for being part of it!</p>
+    </div>
+    <div class="stack" style="margin-top:16px">
+      ${S.authed ? '' : flywheel('after-party')}
+      <div class="note"><p>${S.app && S.app !== 'pp' ? 'Done with this app? Press and hold its icon on your home screen, then choose Remove.' : 'Party details are deleted 60 days after the party.'}</p></div>
+    </div>`;
 }
 function vGuestHome(){
   return `<h2 tabindex="-1">My invites</h2>
@@ -1288,7 +1325,7 @@ function crumbs(){
     edit:[parties, ...(S.event.isNew ? [{label:'New invite'}] : [party, {label:'Edit invite'}])],
     share:[parties, party, {label:'Share link'}],
     rsvps:[parties, {label:partyName()}],
-    guest:[S.authed ? parties : {label:'My invites', go:'guesthome'}, {label:partyName()}],
+    guest: S.app && S.app !== 'pp' ? [{label:partyName()}] : [S.authed ? parties : {label:'My invites', go:'guesthome'}, {label:partyName()}],
     signup:[{label:'My invites', go:'guesthome'}, {label:'Make your own invite'}],
     guesthome:[{label:'My invites'}]
   })[S.screen];
@@ -1298,41 +1335,83 @@ const crumbBar = () => `<nav class="crumbs" aria-label="Breadcrumb"><ol>${crumbs
 /* ---------- render ---------- */
 const host = document.getElementById('screen-host');
 let lastScreen = null;
-function banner(isGuest){
-  if(S.standalone) return '';
+const installed = id => S.apps.find(a => a.id === id);
+function inviteApp(){ return withEvent(0, () => ({id:S.event.slug, kind:'invite', name:names() + '’s party', short:names()})); }
+const PP_APP = {id:'pp', kind:'pp', name:'Party Pop', short:'Party Pop'};
+function appIcon(id, size){
+  const st = `width:${size}px;height:${size}px;border-radius:${Math.round(size/4)}px`;
+  if(id === 'pp') return `<span class="hs-icon pp" style="${st}" aria-hidden="true">P!</span>`;
+  return withEvent(0, () => `<span class="hs-icon kids" style="${st}" aria-hidden="true">${S.event.kids.slice(0,2).map((k,i)=>`<img src="${kidPhoto(k,i)}" alt="">`).join('')}</span>`);
+}
+function banner(){
+  if(S.standalone || S.screen === 'home') return '';
   if(S.browser==='iab-ios') return `<aside class="install" aria-label="Open in your browser"><span class="appicon" aria-hidden="true">P!</span><p><b>Open in Safari to keep your reply</b>Or tap ••• at the top, then “Open in external browser”.</p><button class="btn" type="button" data-act="escape">Open in Safari</button></aside>`;
   if(S.browser==='iab-android') return `<aside class="install" aria-label="Open in your browser"><span class="appicon" aria-hidden="true">P!</span><p><b>Opening in your browser…</b>If nothing happens, tap the button.</p><button class="btn" type="button" data-act="escape">Open in Chrome</button></aside>`;
-  if(S.installed) return '';
-  const pitch = isGuest ? 'Keep your invites on your home screen' : 'Get the Party Pop app';
-  if(S.browser==='ios') return `<aside class="install" aria-label="Install the app"><span class="appicon" aria-hidden="true">P!</span><p><b>${pitch}</b>Tap ${ICON.share}<span class="sr-only">Share</span> then “Add to Home Screen”.</p></aside>`;
-  return `<aside class="install" aria-label="Install the app"><span class="appicon" aria-hidden="true">P!</span><p><b>${pitch}</b>${isGuest?'Find the time, place and your reply in one tap.':'One tap to your parties. No app store.'}</p><button class="btn" type="button" data-act="install">Install</button></aside>`;
+  let app = null;
+  if(S.screen === 'guest') app = inviteApp();
+  else if(S.authed && ['dashboard','edit','share','rsvps'].includes(S.screen)) app = PP_APP;
+  if(!app) return '';
+  const icon = appIcon(app.id, 44);
+  const have = installed(app.id);
+  if(have) return `<aside class="install" aria-label="App on your home screen">${icon}<p><b>“${esc(have.name)}” is on your home screen</b>Open it for one-tap access.</p><button class="btn" type="button" data-act="launch" data-app="${app.id}">Open</button></aside>`;
+  const pitch = app.kind === 'invite' ? `Add ${esc(app.name)} to your home screen` : 'Get the Party Pop app';
+  const sub = app.kind === 'invite' ? 'Its own app: time, place and your reply in one tap.' : 'Your parties and invites in one place.';
+  if(S.browser==='ios') return `<aside class="install" aria-label="Add to home screen">${icon}<p><b>${pitch}</b>Tap ${ICON.share}<span class="sr-only">Share</span> then “Add to Home Screen”.</p><button class="btn" type="button" data-act="install" data-app="${app.id}">Show me</button></aside>`;
+  return `<aside class="install" aria-label="Add to home screen">${icon}<p><b>${pitch}</b>${sub}</p><button class="btn" type="button" data-act="install" data-app="${app.id}">Add</button></aside>`;
+}
+function installSheet(){
+  const app = S.installSheet === 'pp' ? PP_APP : inviteApp();
+  const ios = S.browser === 'ios';
+  return `<div class="sheet-bg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-h">
+      <h3 id="sheet-h">${ios ? 'Add to Home Screen' : 'Install app?'}</h3>
+      <div style="display:flex;gap:12px;align-items:center">${appIcon(app.id, 56)}
+        ${ios ? `<div class="field" style="flex:1;min-width:0"><label for="f-appname">Name on your home screen</label><input type="text" id="f-appname" value="${esc(app.short)}" maxlength="30"></div>`
+              : `<p style="margin:0;font-weight:700">${esc(app.short)}<br><span style="color:var(--muted);font-weight:600">partypop.vercel.app</span></p>`}
+      </div>
+      <div class="btns" style="justify-content:flex-end"><button class="btn" type="button" data-act="sheet-no">Cancel</button><button class="btn blue" type="button" data-act="sheet-yes" id="sheet-yes">${ios ? 'Add' : 'Install'}</button></div>
+    </div></div>`;
+}
+function vHome(){
+  const dummy = [['Chats','#147A39','✉','open-chat'],['Photos','#FFFFFF','✿','noop-app'],['Clock','#17131F','◷','noop-app'],['Settings','#8A84A0','⚙','noop-app']];
+  const cell = (label, icon, act, extra='') => `<button class="hs-app" type="button" data-act="${act}" ${extra}>${icon}<span>${esc(label)}</span></button>`;
+  return `<h2 id="hs-h" tabindex="-1">Home screen</h2>
+    ${dummy.map(([l,bg,g,act]) => cell(l, `<span class="hs-icon" style="background:${bg};color:${bg==='#FFFFFF'?'#C70F37':'#FFFFFF'};font-family:var(--body)" aria-hidden="true">${g}</span>`, act)).join('')}
+    ${S.apps.map(a => cell(a.name, appIcon(a.id, 58), 'launch', `data-app="${a.id}"`)).join('')}
+    <p class="hs-tip">${S.apps.length ? 'Each invite you add gets its own icon, named after the party. Party Pop is a separate app for hosting.' : 'Nothing added yet. Tap Chats to open the invite link a friend sent, then tap Add in the bottom banner.'}</p>`;
 }
 function render(){
   const scr = SCREENS.find(s=>s.id===S.screen);
+  if(S.screen === 'home'){
+    host.innerHTML = `${S.toast?`<div class="toast" aria-hidden="true" style="top:14px">${S.toast}</div>`:''}<div class="homescreen">${vHome()}</div>`;
+    document.getElementById('urlbar').hidden = true;
+    document.getElementById('phone-caption').textContent = 'The phone’s home screen. Each invite gets its own app named after the party; Party Pop is a separate app.';
+    document.querySelectorAll('#flow button').forEach(btn=>btn.setAttribute('aria-current', btn.dataset.go===S.screen ? 'true':'false'));
+    if(lastScreen !== 'home') document.getElementById('hs-h').focus({preventScroll:true});
+    lastScreen = 'home'; return;
+  }
   const view = {login:vLogin,check:vCheck,dashboard:vDashboard,edit:vEdit,share:vShare,rsvps:vRsvps,guest:vGuest,guesthome:vGuestHome,signup:vSignup}[S.screen]();
   const isGuest = scr.who==='guest';
-  const b = banner(isGuest);
+  const inInviteApp = S.app && S.app !== 'pp';
+  const b = banner();
   host.innerHTML = `
-    <div class="appbar"><span class="logo">Party Pop!</span>${S.authed ? `<span class="who-badge">Signed in</span>` : isGuest ? '<span class="who-badge">Guest view</span>' : ''}</div>
+    <div class="appbar"><span class="logo">Party Pop!</span>${inInviteApp ? '<span class="who-badge">Invite app</span>' : S.authed ? `<span class="who-badge">Signed in</span>` : isGuest ? '<span class="who-badge">Guest view</span>' : ''}</div>
     ${crumbBar()}
     ${S.toast?`<div class="toast" aria-hidden="true">${S.toast}</div>`:''}
     <div class="scroll ${b?'with-banner':''}" id="scroll">${view}
     </div>
     ${b}
-    ${S.installSheet?`<div class="sheet-bg"><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-h">
-      <h3 id="sheet-h">Install app?</h3>
-      <div style="display:flex;gap:12px;align-items:center"><span class="appicon" aria-hidden="true">P!</span><p style="margin:0;font-weight:700">Party Pop<br><span style="color:var(--muted);font-weight:600">partypop.vercel.app</span></p></div>
-      <div class="btns" style="justify-content:flex-end"><button class="btn" type="button" data-act="sheet-no">Cancel</button><button class="btn blue" type="button" data-act="sheet-yes" id="sheet-yes">Install</button></div>
-    </div></div>`:''}`;
+    ${S.installSheet ? installSheet() : ''}`;
   document.getElementById('urlbar').hidden = S.standalone;
   const iab = S.browser.startsWith('iab') && !S.standalone;
-  document.getElementById('url').textContent = (iab ? 'Messenger · ' : '') + 'partypop.vercel.app' + (S.cur ? scr.url.replace('maya-leo', S.event.slug) : scr.url);
-  document.getElementById('phone-caption').textContent = S.standalone
-    ? 'Running as the installed app: no address bar, no install banner.'
+  const path = S.screen==='guest' && S.app==='pp' ? '/app/invites/' + SLUG : (S.cur ? scr.url.replace('maya-leo', S.event.slug) : scr.url);
+  document.getElementById('url').textContent = (iab ? 'Messenger · ' : '') + 'partypop.vercel.app' + path;
+  document.getElementById('phone-caption').textContent = S.app === 'pp'
+    ? 'Running as the Party Pop app (covers /app/ only): your parties and the invites you’ve received.'
+    : inInviteApp ? `Running as the “${installed(S.app)?.name || 'invite'}” app. It only shows this one invite; anything else opens in the browser.`
     : iab ? 'Inside Messenger’s built-in browser. Replies saved here don’t carry over to the phone’s browser, and the app can’t be installed from here, so the banner offers a way out.'
-    : (S.installed ? 'Installed. The banner is gone; open from the home screen to see the app view.' : 'In the browser: the install banner is fixed to the bottom.');
+    : b ? 'In the browser: the bottom banner offers the app that fits this page.' : 'In the browser. This page has no app to offer, so there is no banner.';
   document.querySelectorAll('#flow button').forEach(btn=>btn.setAttribute('aria-current', btn.dataset.go===S.screen ? 'true':'false'));
-  if(S.installSheet){ document.getElementById('sheet-yes').focus(); }
+  if(S.installSheet){ (document.getElementById('f-appname') || document.getElementById('sheet-yes')).focus(); }
   else if(lastScreen !== S.screen && lastScreen !== null){
     const h = host.querySelector('h2'); if(h) h.focus({preventScroll:true});
     document.getElementById('scroll').scrollTop = 0;
@@ -1340,6 +1419,10 @@ function render(){
   lastScreen = S.screen;
 }
 function go(id, ev){
+  if(id === 'home'){ S.app = null; S.installSheet = null; }
+  // An invite app only covers its own invite; anything else opens in the browser
+  const leaving = S.app && S.app !== 'pp' && !['guest','home'].includes(id);
+  if(leaving){ S.app = null; setTimeout(() => toast('Opened in your browser'), 0); }
   if(['dashboard','edit','share','rsvps'].includes(id) && !S.authed){ S.authed = true; S.me = 'priya'; if(!S.email) S.email='priya@example.com'; }
   if(id==='guest') S.cur = 0;
   if(ev != null) S.cur = +ev;
@@ -1390,7 +1473,8 @@ function invalid(prefix, field, msg, focusId){
 document.addEventListener('click', e=>{
   const g = e.target.closest('[data-go]');
   if(g){
-    const fromNav = g.closest('#flow'), id = g.dataset.go;
+    const fromNav = g.closest('#flow') || g.closest('.homebtn'), id = g.dataset.go;
+    if(fromNav && id !== 'home') S.app = null;
     if(fromNav && ['dashboard','edit','share','rsvps'].includes(id)){ S.authed = true; S.me = 'priya'; S.email = 'priya@example.com'; S.cur = 0; }
     if(fromNav && ['guesthome','signup'].includes(id)){ S.authed = false; }
     go(id, g.dataset.ev); if(fromNav) g.focus(); return;
@@ -1430,9 +1514,20 @@ document.addEventListener('click', e=>{
   else if(act==='noop'){ toast('Example invite: open Maya’s to try it'); }
   else if(act==='guest-edit'){ S.guestEdit=true; render(); const n=document.getElementById('g-name'); n&&n.focus(); }
   else if(act==='guest-cancel'){ S.guestEdit=false; S.errors={}; S.draft=null; render(); }
-  else if(act==='install'){ S.installSheet=true; render(); }
-  else if(act==='sheet-no'){ S.installSheet=false; render(); }
-  else if(act==='sheet-yes'){ S.installSheet=false; S.installed=true; toast('Installed. Party Pop is on your home screen.'); }
+  else if(act==='install'){ S.installSheet = a.dataset.app; render(); }
+  else if(act==='sheet-no'){ S.installSheet = null; render(); }
+  else if(act==='sheet-yes'){
+    const app = S.installSheet === 'pp' ? PP_APP : inviteApp();
+    const name = (document.getElementById('f-appname')?.value || '').trim() || app.short;
+    S.apps = S.apps.filter(x => x.id !== app.id).concat({id:app.id, name});
+    S.installSheet = null; toast(`Added “${name}” to your home screen`);
+  }
+  else if(act==='launch'){
+    const id = a.dataset.app; S.app = id;
+    if(id === 'pp') go(S.authed ? 'dashboard' : 'login'); else go('guest');
+  }
+  else if(act==='open-chat'){ S.app = null; go('guest'); }
+  else if(act==='noop-app'){ toast('Just for show'); }
   else if(act==='edit-r'){ S.editing=a.dataset.id; S.confirmDel=null; render(); const n=document.getElementById('h-'+a.dataset.id+'-name'); n&&n.focus(); }
   else if(act==='cancel-edit'){ const id=S.editing; S.editing=null; S.errors={}; S.draft=null; render(); const b=host.querySelector(`[data-act="edit-r"][data-id="${id}"]`); b&&b.focus(); }
   else if(act==='del'){ S.confirmDel=a.dataset.id; render(); const b=host.querySelector('[data-act="del-no"]'); b&&b.focus(); }
@@ -1523,7 +1618,7 @@ document.addEventListener('submit', e=>{
   }
 });
 
-document.getElementById('sim-standalone').addEventListener('change', e=>{ S.standalone=e.target.checked; render(); });
+document.getElementById('sim-over').addEventListener('change', e=>{ S.partyOver=e.target.checked; render(); });
 let iabT;
 document.getElementById('sim-browser').addEventListener('change', e=>{
   S.browser=e.target.value; render(); clearTimeout(iabT);
@@ -1531,8 +1626,8 @@ document.getElementById('sim-browser').addEventListener('change', e=>{
   if(S.browser==='iab-android') iabT = setTimeout(()=>{ if(S.browser!=='iab-android') return; S.browser='chrome'; e.target.value='chrome'; toast('Moved to Chrome automatically'); }, 2500);
 });
 document.getElementById('reset').addEventListener('click', ()=>{
-  lsSet(null); S.events=freshEvents(); S.cur=0; S.me='priya'; S.claimed=false; S.installed=false; S.authed=false; S.email=''; S.browser='chrome'; document.getElementById('sim-browser').value='chrome';
-  document.getElementById('sim-standalone').checked=false; S.standalone=false; go('login'); toast('Prototype reset');
+  lsSet(null); S.events=freshEvents(); S.cur=0; S.me='priya'; S.claimed=false; S.apps=[]; S.app=null; S.partyOver=false; S.installSheet=null; S.authed=false; S.email=''; S.browser='chrome'; document.getElementById('sim-browser').value='chrome';
+  document.getElementById('sim-over').checked=false; go('login'); toast('Prototype reset');
 });
 
 /* ---------- tabs ---------- */
